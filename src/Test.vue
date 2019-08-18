@@ -1,41 +1,38 @@
 <template>
-	<vue-editor
-		:options="{ theme: 'base16-light' }"
-		:template="code"
-	></vue-editor>
+	<code-vue :options="{ theme: 'base16-light' }" :template="code"></code-vue>
 </template>
 
 <script>
-	import VueEditor from "./VueEditor";
+	import CodeVue from "./CodeVue";
 
 	export default {
-		components: { VueEditor },
+		components: { CodeVue },
 
 		data: () => ({
 			/* eslint-disable no-useless-escape */
-			code: `
-			<template>
-			    <h1>Count: {{count}}</h1>
-			</template>
+            code:
+`<template>
+    <h1>Count: {{count}}</h1>
+</template>
 
-			<style>
-			    h1 {
-			        background: deeppink;
-			    }
-			</style>
+<style>
+    h1 {
+        background: deeppink;
+    }
+</style>
 
-			<script>
-			    export default {
-			        data: () => ({
-			            count: 0,
-			        }),
-			        mounted() {
-			            setInterval(() => {
-			                this.count++
-			            }, 1000);
-			        },
-			    }
-			<\/script>`
+<script>
+    export default {
+        data: () => ({
+            count: 0,
+        }),
+        mounted() {
+            setInterval(() => {
+                this.count++
+            }, 1000);
+        },
+    }
+<\/script>`
 		})
 	};
 </script>

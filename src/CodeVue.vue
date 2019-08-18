@@ -21,7 +21,11 @@
 			value: String,
 			scope: Object,
 			iframe: Boolean,
-			autorun: Boolean
+			autorun: Boolean,
+
+			// if autorun is true, then autorun is debounced by this amount after user
+			// types into the code editor.
+			debounce: { type: Number, default: 0 }
 		},
 
 		data() {

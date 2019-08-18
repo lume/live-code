@@ -1,4 +1,4 @@
-# vue-editor
+# code-vue
 
 ## Project setup
 ```

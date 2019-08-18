@@ -3,7 +3,7 @@ import Test from './Test.vue'
 
 Vue.config.productionTip = false
 
-// TODO test vue-editor here
+// TODO test code-vue here
 
 new Vue({
   render: h => h(Test),

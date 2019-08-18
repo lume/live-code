@@ -59,6 +59,8 @@
 					this.iframe &&
 					this.$refs.el.contentDocument.readyState !== "complete"
 				) {
+					// eslint-disable-next-line no-console
+					console.error(new Error("Unable to render to iframe"));
 					return;
 				}
 

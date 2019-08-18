@@ -1,12 +1,12 @@
 import Vue from 'vue'
-import VueEditor from './VueEditor'
+import CodeVue from './CodeVue'
 
 const Components = {
-    VueEditor
+    CodeVue
 }
 
 for (const name of Object.keys(Components)) {
     Vue.component(name, Components[name])
 }
 
-export {VueEditor}
+export {CodeVue}
