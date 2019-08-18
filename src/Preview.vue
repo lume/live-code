@@ -110,7 +110,6 @@
 						}
 					}
 				} catch (e) {
-					/* istanbul ignore next */
 					this.$emit("error", e);
 				}
 			}

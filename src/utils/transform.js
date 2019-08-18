@@ -3,7 +3,6 @@ window.require = require
 
 export default function evalJS (script, scope = {}) {
   // https://www.npmjs.com/package/babel-standalone
-  /* istanbul ignore next */
 
   if (typeof Babel !== 'undefined') {
     const plugins = []

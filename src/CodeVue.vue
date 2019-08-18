@@ -51,7 +51,6 @@
 		created() {
 			this.executeCodeDebounced = debounce(this.executeCode, DEBOUNCE_TIME);
 
-			/* istanbul ignore next */
 			if (this.$isServer) return;
 
 			let content = this.template;
@@ -60,7 +59,6 @@
 				const html = document.querySelector(this.template);
 				if (!html) throw Error(`${this.template} is not found`);
 
-				/* istanbul ignore next */
 				content = unescape(html.innerHTML);
 			}
 
@@ -73,7 +71,6 @@
 
 		methods: {
 			handleError(err) {
-				/* istanbul ignore next */
 				this.error = err;
 			},
 
@@ -92,7 +89,6 @@
 				this.error = "";
 				const result = parser(this.currentValue);
 
-				/* istanbul ignore next */
 				if (result.error) {
 					this.error = result.error.message;
 					return;
@@ -100,7 +96,6 @@
 
 				const compiledCode = compiler(result, this.scope);
 
-				/* istanbul ignore next */
 				if (compiledCode.error) {
 					this.error = compiledCode.error.message;
 					return;
