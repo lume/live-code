@@ -1,6 +1,5 @@
 export default function (input) {
   const html = document.createElement('div')
-    console.log('TRIM INPUT');
   const content = html.innerHTML = input.trim()
 
   try {

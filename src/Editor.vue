@@ -1,41 +1,67 @@
 <template>
-	<div>
-		<textarea ref="textarea" v-model="value"></textarea>
+	<div class="line-numbers">
+		<!-- NOTE, syntax highlight (Prism) doesn't update unless there's a v-model
+		specified, so we made a dummy one ("internalCode" property) rather than using
+		the :code="" attribute. -->
+		<!-- :code="value" -->
+		<prism-editor
+			v-model="internalCode"
+			@change="handleChange"
+			language="html"
+			:line-numbers="true"
+		/>
 	</div>
 </template>
 
-<script>
-	import CodeMirror from "codemirror";
+<style lang="scss">
+	.prism-editor-wrapper {
+		background: #f7f7f7;
 
-	const DEFAULT_OPTIONS = {
-		lineNumbers: true,
-		mode: "text/x-vue",
-		theme: "material",
-		tabSize: 2
-	};
+		pre {
+			outline: none;
+		}
+	}
+
+	.prism-editor__line-numbers {
+		padding-right: 5px;
+		margin-right: 5px;
+		border-right: 1px solid gray;
+		user-select: none;
+	}
+</style>
+
+<script>
+	import PrismEditor from "vue-prism-editor";
+	import "vue-prism-editor/dist/VuePrismEditor.css";
+
+	// TODO options
+	// const DEFAULT_OPTIONS = {
+	// 	lineNumbers: true,
+	// 	mode: "text/x-vue",
+	// 	theme: "material",
+	// 	tabSize: 2
+	// };
 
 	export default {
+		components: { PrismEditor },
 		props: ["value", "options"],
 
-		mounted() {
-			this.currentOptions = Object.assign({}, DEFAULT_OPTIONS, this.options);
-			this.editor = CodeMirror.fromTextArea(
-				this.$refs.textarea,
-				this.currentOptions
-			);
-			this.editor.on("change", this.handleChange);
+		data() {
+			return {
+				internalCode: this.value
+			};
 		},
 
-		watch: {
-			value(val) {
-				val !== this.editor.getValue() && this.editor.setValue(val);
-			}
+		mounted() {
+			// TODO options
+			// this.currentOptions = Object.assign({}, DEFAULT_OPTIONS, this.options);
 		},
+
+		watch: {},
 
 		methods: {
-			handleChange() {
-				/* istanbul ignore next */
-				this.$emit("change", this.editor.getValue());
+			handleChange(code) {
+				this.$emit("change", code);
 			}
 		}
 	};

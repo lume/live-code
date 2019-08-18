@@ -1,9 +1,121 @@
+<script>
+	import debounce from "lodash/debounce";
+	import unescape from "lodash/unescape";
+	import Editor from "./Editor";
+	import Preview from "./Preview";
+	import parser from "./utils/parser";
+	import compiler from "./utils/compiler";
+
+	const DEBOUNCE_TIME = 2000;
+
+	export default {
+		components: {
+			Preview,
+			Editor
+		},
+
+		props: {
+			template: String,
+			options: {},
+			keepData: Boolean,
+			value: String,
+			scope: Object,
+			iframe: Boolean,
+			autorun: Boolean
+		},
+
+		data() {
+			return {
+				content: "",
+				preview: "",
+				styles: "",
+				error: "",
+				currentValue: ""
+			};
+		},
+
+		watch: {
+			value: {
+				immediate: true,
+				handler(val) {
+					this.currentValue = val;
+					val && this.executeCodeDebounced();
+				}
+			}
+		},
+
+		created() {
+			this.executeCodeDebounced = debounce(this.executeCode, DEBOUNCE_TIME);
+
+			/* istanbul ignore next */
+			if (this.$isServer) return;
+
+			let content = this.template;
+
+			if (/^[.#]/.test(this.template)) {
+				const html = document.querySelector(this.template);
+				if (!html) throw Error(`${this.template} is not found`);
+
+				/* istanbul ignore next */
+				content = unescape(html.innerHTML);
+			}
+
+			if (content) {
+				this.currentValue = content;
+				this.executeCode();
+				this.$emit("input", content);
+			}
+		},
+
+		methods: {
+			handleError(err) {
+				/* istanbul ignore next */
+				this.error = err;
+			},
+
+			handleChange(val) {
+				this.currentValue = val;
+				this.autorun && this.executeCodeDebounced();
+				this.$emit("input", val);
+			},
+
+			rerun() {
+				this.executeCodeDebounced.cancel();
+				this.executeCode();
+			},
+
+			executeCode() {
+				this.error = "";
+				const result = parser(this.currentValue);
+
+				/* istanbul ignore next */
+				if (result.error) {
+					this.error = result.error.message;
+					return;
+				}
+
+				const compiledCode = compiler(result, this.scope);
+
+				/* istanbul ignore next */
+				if (compiledCode.error) {
+					this.error = compiledCode.error.message;
+					return;
+				}
+
+				this.content = result.content;
+				this.preview = compiledCode.result;
+				if (compiledCode.styles) this.styles = compiledCode.styles;
+			}
+		}
+	};
+</script>
+
 <template>
 	<div class="vuep">
 		<editor
 			ref="editor"
 			class="vuep-editor"
-			:value="content"
+			:value="currentValue"
 			:options="options"
 			@change="handleChange"
 		>
@@ -12,6 +124,7 @@
 		<div v-if="error" class="vuep-error">
 			{{ error }}
 		</div>
+
 		<preview
 			v-if="!error"
 			class="vuep-preview"
@@ -30,14 +143,12 @@
 </template>
 
 <style lang="scss">
-	@import "~codemirror/lib/codemirror.css";
-	@import "~codemirror/theme/material.css";
-
 	.vuep {
 		display: flex;
 		font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
-		height: 400px;
 		position: relative;
+		height: 400px;
+		width: 100%;
 
 		::-webkit-scrollbar-track {
 			border-radius: 10px;
@@ -73,10 +184,6 @@
 
 		&:last-child {
 			margin-right: 0;
-		}
-
-		.CodeMirror {
-			height: inherit;
 		}
 	}
 
@@ -115,108 +222,3 @@
 		}
 	}
 </style>
-
-<script>
-	import debounce from "lodash/debounce";
-	import Editor from "./Editor";
-	import Preview from "./Preview";
-	import parser from "./utils/parser";
-	import compiler from "./utils/compiler";
-
-	const DEBOUNCE_TIME = 2000;
-
-	export default {
-		components: {
-			Preview,
-			Editor
-		},
-
-		props: {
-			template: String,
-			options: {},
-			keepData: Boolean,
-			value: String,
-			scope: Object,
-			iframe: Boolean,
-			autorun: Boolean
-		},
-
-		data() {
-			return {
-				content: "",
-				preview: "",
-				styles: "",
-				error: ""
-			};
-		},
-
-		watch: {
-			value: {
-				immediate: true,
-				handler(val) {
-					val && this.executeCodeDebounced(val);
-				}
-			}
-		},
-
-		created() {
-			this.executeCodeDebounced = debounce(this.executeCode, DEBOUNCE_TIME);
-
-			/* istanbul ignore next */
-			if (this.$isServer) return;
-			let content = this.template;
-
-			if (/^[\.#]/.test(this.template)) {
-				const html = document.querySelector(this.template);
-				if (!html) throw Error(`${this.template} is not found`);
-
-				/* istanbul ignore next */
-				content = html.innerHTML;
-			}
-
-			if (content) {
-				this.executeCode(content);
-				this.$emit("input", content);
-			}
-		},
-
-		methods: {
-			handleError(err) {
-				/* istanbul ignore next */
-				this.error = err;
-			},
-
-			handleChange(val) {
-				this.autorun && this.executeCodeDebounced();
-				this.$emit("input", val);
-			},
-
-			rerun() {
-				this.executeCode(this.$refs.editor.editor.getValue());
-			},
-
-			executeCode(code) {
-				this.error = "";
-				const result = parser(code);
-
-				/* istanbul ignore next */
-				if (result.error) {
-					this.error = result.error.message;
-					return;
-				}
-
-				const compiledCode = compiler(result, this.scope);
-
-				/* istanbul ignore next */
-				if (compiledCode.error) {
-					this.error = compiledCode.error.message;
-					return;
-				}
-
-				this.content = result.content;
-				this.preview = compiledCode.result;
-				if (compiledCode.styles) this.styles = compiledCode.styles;
-			}
-		}
-	};
-</script>
