@@ -42,7 +42,8 @@
 				styles: "",
 				error: "",
 				editorValue: "",
-				initialValue: this.value
+				initialValue: this.value,
+				forceRender: 0
 			};
 		},
 
@@ -95,6 +96,9 @@
 			rerun() {
 				this.executeCodeDebounced.cancel();
 				this.executeCode();
+
+				// force Vue to re-make the preview, in case no values have changed
+				this.forceRender++;
 			},
 
 			executeCode() {
@@ -198,6 +202,7 @@
 
 		<preview
 			v-if="!error"
+			:key="forceRender"
 			class="vuep-preview"
 			:value="exports"
 			:styles="styles"
@@ -249,17 +254,13 @@
 	.vuep-error {
 		border-radius: 2px;
 		height: inherit;
-		margin-right: 10px;
 		overflow: auto;
 		width: 50%;
-
-		&:last-child {
-			margin-right: 0;
-		}
 	}
 
 	.vuep-editor {
 		line-height: 1.2em;
+		margin-right: 10px;
 	}
 
 	.vuep-error {
@@ -278,8 +279,14 @@
 			display: block;
 			width: 100%;
 			height: 100%;
+			margin: 0;
+			padding: 0;
 			border: none;
 		}
+	}
+
+	[class^="vuep-scoped-"] {
+		height: inherit;
 	}
 
 	.vuep-rerun {

@@ -12,12 +12,6 @@
 	</div>
 </template>
 
-<style>
-	[class^="vuep-scoped-"] {
-		height: inherit;
-	}
-</style>
-
 <script>
 	import Vue from "vue/dist/vue.common";
 
@@ -36,7 +30,9 @@
 			},
 
 			iframe() {
-				return ["vue>iframe", "script>iframe", "html>iframe"].includes(this.mode);
+				return ["vue>iframe", "script>iframe", "html>iframe"].includes(
+					this.mode
+				);
 			}
 		},
 
@@ -52,12 +48,6 @@
 			// if (this.iframe) {
 			// 	this.$refs.el.removeEventListener("load", this.renderCode);
 			// }
-
-			this.__iframeLoadListener &&
-				this.$refs.el.removeEventListener(
-					"load",
-					this.__iframeLoadListener
-				);
 		},
 
 		methods: {
@@ -148,13 +138,13 @@
 							const html =
 								"data:text/html," +
 								encodeURIComponent(`<html>
-  <head>
-  </head>
-  <body>
-    <script>
-${this.value}
-    <\/script>
-  </body>
+	  <head>
+	  </head>
+	  <body>
+	    <script>
+	${this.value}
+	    <\/script>
+	  </body>
 	</html>
 	`);
 
@@ -170,7 +160,7 @@ ${this.value}
 							const html =
 								"data:text/html," +
 								encodeURIComponent(`
-${this.value}
+	${this.value}
 	`);
 							this.$refs.el.src = html;
 						}
