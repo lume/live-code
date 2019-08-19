@@ -145,7 +145,9 @@
 					case "script>iframe": {
 						if (this.iframe) {
 							/* eslint-disable no-useless-escape */
-							const html = `data:text/html,<html>
+							const html =
+								"data:text/html," +
+								encodeURIComponent(`<html>
   <head>
   </head>
   <body>
@@ -153,7 +155,8 @@
 ${this.value}
     <\/script>
   </body>
-</html>`;
+	</html>
+	`);
 
 							this.$refs.el.src = html;
 						}
@@ -164,9 +167,11 @@ ${this.value}
 					case "html>iframe": {
 						if (this.iframe) {
 							/* eslint-disable no-useless-escape */
-              const html = `data:text/html,
+							const html =
+								"data:text/html," +
+								encodeURIComponent(`
 ${this.value}
-              `
+	`);
 							this.$refs.el.src = html;
 						}
 
