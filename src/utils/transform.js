@@ -1,35 +1,36 @@
 import require from './require.js'
 window.require = require
 
-export default function evalJS (script, scope = {}) {
+/**
+ * Evaluate a script with the given scope. The code is wrapped with a basic
+ * CommonJS wrapper, in case it exports anything.
+ */
+export default function evalJS (script, scope = {}, module = true) {
   // https://www.npmjs.com/package/babel-standalone
 
-  if (typeof Babel !== 'undefined') {
-    const plugins = []
-
-    // Register jsx plugin
-    if (window['babel-plugin-transform-vue-jsx']) {
-      if (!Babel.availablePlugins['transform-vue-jsx']) { // eslint-disable-line
-        Babel.registerPlugin('transform-vue-jsx', window['babel-plugin-transform-vue-jsx']) // eslint-disable-line
-      }
-      plugins.push('transform-vue-jsx')
-    }
-
-    script =  Babel.transform(script, { // eslint-disable-line
-      presets: [['es2015', { 'loose': true }], 'stage-2'],
-      plugins,
-      comments: false
-    }).code
-  }
-
-  var scopeDecl = ''
-  for (var variable in scope) {
+  let scopeDecl = ''
+  for (let variable in scope) {
     if (scope.hasOwnProperty(variable)) {
-      scopeDecl += 'var ' + variable + ' = __vuep[\'' + variable + '\'];'
+      scopeDecl += 'var ' + variable + ' = __scope__[\'' + variable + '\'];'
     }
   }
 
-  script = `(function(exports){var module={};module.exports=exports;${scopeDecl};${script};return module.exports.__esModule?module.exports.default:module.exports;})({})`
-  const result = new Function('__vuep', 'return ' + script)(scope) || {} // eslint-disable-line
+  let code = `${scopeDecl};${script}`
+
+  if (module) {
+    code = `
+        return (function() {
+            let exports = {}
+            let module = {};
+            module.exports = exports;
+
+            ${code};
+
+            return module.exports.__esModule ? module.exports.default : module.exports;
+        })()
+    `
+  }
+
+  const result = new Function('__scope__', code)(scope) || {}
   return result
 }

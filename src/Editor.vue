@@ -7,7 +7,7 @@
 		<prism-editor
 			v-model="internalCode"
 			@change="handleChange"
-			language="html"
+			:language="syntax"
 			:line-numbers="true"
 		/>
 	</div>
@@ -34,7 +34,7 @@
 	import PrismEditor from "vue-prism-editor";
 	import "vue-prism-editor/dist/VuePrismEditor.css";
 
-	// TODO options
+	// TODO pass options to Prism
 	// const DEFAULT_OPTIONS = {
 	// 	lineNumbers: true,
 	// 	mode: "text/x-vue",
@@ -44,7 +44,7 @@
 
 	export default {
 		components: { PrismEditor },
-		props: ["value", "options"],
+		props: ["value", "options", "mode"],
 
 		data() {
 			return {
@@ -52,17 +52,30 @@
 			};
 		},
 
-		mounted() {
-			// TODO options
-			// this.currentOptions = Object.assign({}, DEFAULT_OPTIONS, this.options);
+		computed: {
+			syntax() {
+				switch (true) {
+                    case startsWith(this.mode, 'vue', 'html'): {
+						return "html";
+					}
+                    case startsWith(this.mode, 'script'): {
+						return "js";
+					}
+					default: {
+						return "js";
+					}
+				}
+			}
 		},
-
-		watch: {},
 
 		methods: {
 			handleChange(code) {
 				this.$emit("change", code);
 			}
 		}
-	};
+    };
+    
+    function startsWith(string, ...strings) {
+        return strings.some(s => string.startsWith(s))
+    }
 </script>

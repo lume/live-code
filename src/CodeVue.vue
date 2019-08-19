@@ -5,8 +5,7 @@
 	import Preview from "./Preview";
 	import parser from "./utils/parser";
 	import compiler from "./utils/compiler";
-
-	const DEBOUNCE_TIME = 2000;
+	import evalJS from "./utils/transform";
 
 	export default {
 		components: {
@@ -20,8 +19,17 @@
 			keepData: Boolean,
 			value: String,
 			scope: Object,
-			iframe: Boolean,
-			autorun: Boolean,
+			autorun: { type: Boolean, default: true },
+
+			/**
+			 * Specify the editor mode:
+			 * - vue - Export a Vue component which gets rendered in the preview area.
+			 * - vue>iframe - Same a "Vue", but rendered into an iframe
+			 * - script
+			 * - script>iframe
+			 * - html>iframe
+			 */
+			mode: { type: String, default: "vue" },
 
 			// if autorun is true, then autorun is debounced by this amount after user
 			// types into the code editor.
@@ -30,11 +38,11 @@
 
 		data() {
 			return {
-				content: "",
-				preview: "",
+				exports: "",
 				styles: "",
 				error: "",
-				currentValue: ""
+				editorValue: "",
+				initialValue: this.value
 			};
 		},
 
@@ -42,14 +50,14 @@
 			value: {
 				immediate: true,
 				handler(val) {
-					this.currentValue = val;
+					this.editorValue = val;
 					val && this.executeCodeDebounced();
 				}
 			}
 		},
 
 		created() {
-			this.executeCodeDebounced = debounce(this.executeCode, DEBOUNCE_TIME);
+			this.executeCodeDebounced = debounce(this.executeCode, this.debounce);
 
 			if (this.$isServer) return;
 
@@ -63,7 +71,8 @@
 			}
 
 			if (content) {
-				this.currentValue = content;
+				this.initialValue = content;
+				this.editorValue = content;
 				this.executeCode();
 				this.$emit("input", content);
 			}
@@ -71,11 +80,14 @@
 
 		methods: {
 			handleError(err) {
-				this.error = err;
+				// eslint-disable-next-line
+				// debugger;
+				this.error = err.message + "(see console)";
+				console.error(err); // eslint-disable-line
 			},
 
 			handleChange(val) {
-				this.currentValue = val;
+				this.editorValue = val;
 				this.autorun && this.executeCodeDebounced();
 				this.$emit("input", val);
 			},
@@ -87,23 +99,82 @@
 
 			executeCode() {
 				this.error = "";
-				const result = parser(this.currentValue);
+				this.styles = "";
 
-				if (result.error) {
-					this.error = result.error.message;
-					return;
+				switch (this.mode) {
+					case "vue":
+					case "vue>iframe": {
+						const parsed = parser(this.editorValue);
+
+						if (parsed.error) {
+							// eslint-disable-next-line
+							// debugger;
+							this.error = parsed.error.message + "(see console)";
+							console.error(parsed.error); // eslint-disable-line
+							return;
+						}
+
+						if (!parsed.script && !parsed.template) {
+							this.error = "no data";
+							console.error("no data"); // eslint-disable-line
+						}
+
+						const compiled = compiler(parsed.script);
+
+						if (compiled.error) {
+							// eslint-disable-next-line
+							// debugger;
+							this.error = compiled.error.message + "(see console)";
+							console.error(compiled.error); // eslint-disable-line
+							return;
+						}
+
+						let exports;
+
+						try {
+							exports = evalJS(compiled.script, this.scope);
+						} catch (e) {
+							// eslint-disable-next-line
+							// debugger;
+							this.error = e.message + " (see console)";
+							console.error(e); // eslint-disable-line
+							return;
+						}
+
+						if (parsed.template) {
+							exports.template = parsed.template;
+						}
+
+						this.exports = exports;
+
+						if (parsed.styles) this.styles = parsed.styles.join(" ");
+
+						break;
+					}
+
+					case "script": {
+						try {
+							evalJS(this.editorValue, this.scope, false);
+							break;
+						} catch (e) {
+							// eslint-disable-next-line
+							// debugger;
+							this.error = e.message + " (see console)";
+							console.error(e); // eslint-disable-line
+							break;
+						}
+					}
+
+					case "script>iframe": {
+						this.exports = this.editorValue;
+						break;
+					}
+
+					case "html>iframe": {
+						this.exports = this.editorValue;
+						break;
+					}
 				}
-
-				const compiledCode = compiler(result, this.scope);
-
-				if (compiledCode.error) {
-					this.error = compiledCode.error.message;
-					return;
-				}
-
-				this.content = result.content;
-				this.preview = compiledCode.result;
-				if (compiledCode.styles) this.styles = compiledCode.styles;
 			}
 		}
 	};
@@ -114,23 +185,24 @@
 		<editor
 			ref="editor"
 			class="vuep-editor"
-			:value="currentValue"
 			:options="options"
+			:mode="mode"
 			@change="handleChange"
+			:value="initialValue"
 		>
 		</editor>
 
 		<div v-if="error" class="vuep-error">
-			{{ error }}
+			<pre>{{ error }}</pre>
 		</div>
 
 		<preview
 			v-if="!error"
 			class="vuep-preview"
-			:value="preview"
+			:value="exports"
 			:styles="styles"
 			:keep-data="keepData"
-			:iframe="iframe"
+			:mode="mode"
 			@error="handleError"
 		>
 		</preview>
@@ -192,13 +264,22 @@
 
 	.vuep-error {
 		color: #f66;
+		padding: 25px 35px;
 	}
 
 	.vuep-preview,
 	.vuep-error {
 		border: 1px solid #eee;
 		box-sizing: border-box;
-		padding: 25px 35px;
+	}
+
+	.vuep-preview {
+		iframe {
+			display: block;
+			width: 100%;
+			height: 100%;
+			border: none;
+		}
 	}
 
 	.vuep-rerun {
