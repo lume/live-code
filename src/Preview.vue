@@ -18,6 +18,10 @@
 	export default {
 		props: ["value", "styles", "keepData", "mode"],
 
+		created() {
+			this.handleMessage = this.handleMessage.bind(this);
+		},
+
 		computed: {
 			scopedStyle() {
 				return this.styles
@@ -39,18 +43,26 @@
 		mounted() {
 			this.$watch("value", this.renderCode, { immediate: true });
 
-			// if (this.iframe) {
-			// 	this.$refs.el.addEventListener("load", this.renderCode);
-			// }
+			window.addEventListener("message", this.handleMessage);
 		},
 
-		beforeDestroy() {
-			// if (this.iframe) {
-			// 	this.$refs.el.removeEventListener("load", this.renderCode);
-			// }
+		errorCaptured(error) {
+			this.handleError(error);
 		},
 
 		methods: {
+			handleError(error) {
+				this.$emit("error", error);
+			},
+
+			handleMessage(msg) {
+				if (!(this.$refs.el && msg.source === this.$refs.el.contentWindow)) return;
+
+				if (msg.data && msg.data.error) {
+					this.handleError(msg.data.error);
+				}
+			},
+
 			renderCode() {
 				switch (this.mode) {
 					case "vue":
@@ -135,18 +147,33 @@
 					case "script>iframe": {
 						if (this.iframe) {
 							/* eslint-disable no-useless-escape */
-							const html =
-								"data:text/html," +
-								encodeURIComponent(`<html>
-	  <head>
-	  </head>
-	  <body>
-	    <script>
-	${this.value}
-	    <\/script>
-	  </body>
-	</html>
-	`);
+							const html = URL.createObjectURL(
+								new Blob(
+									[
+										`<html>
+	                    <head></head>
+	                    <body>
+	                      <script>
+	                        window.addEventListener('error', (e) => {
+	                          ;(window.parent || window.opener).postMessage({
+	                            error: e.error ? {
+	                              message: e.error.message,
+	                              stack: e.error.stack,
+	                            } : {
+	                              message: e.message,
+	                            }
+	                          })
+	                        })
+	                      <\/script>
+	                      <script>
+	                  ${this.value}
+	                      <\/script>
+	                    </body>
+	                  </html>`
+									],
+									{ type: "text/html" }
+								)
+							);
 
 							this.$refs.el.src = html;
 						}
@@ -157,11 +184,29 @@
 					case "html>iframe": {
 						if (this.iframe) {
 							/* eslint-disable no-useless-escape */
-							const html =
-								"data:text/html," +
-								encodeURIComponent(`
-	${this.value}
-	`);
+							const html = URL.createObjectURL(
+								new Blob(
+									[
+										`<script>
+	                    window.addEventListener('error', (e) => {
+	                      ;(window.parent || window.opener).postMessage({
+	                        error: e.error ? {
+	                          message: e.error.message,
+	                          stack: e.error.stack,
+	                        } : {
+	                          message: e.message,
+	                        }
+	                      })
+	                    })
+	                  <\/script>
+	                  ` + this.value
+									],
+									{
+										type: "text/html"
+									}
+								)
+							);
+
 							this.$refs.el.src = html;
 						}
 

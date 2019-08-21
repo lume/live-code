@@ -83,7 +83,7 @@
 			handleError(err) {
 				// eslint-disable-next-line
 				// debugger;
-				this.error = err.message + "(see console)";
+				this.error = err.message + " (see console)";
 				console.error(err); // eslint-disable-line
 			},
 
