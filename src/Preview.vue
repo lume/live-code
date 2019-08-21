@@ -56,7 +56,8 @@
 			},
 
 			handleMessage(msg) {
-				if (!(this.$refs.el && msg.source === this.$refs.el.contentWindow)) return;
+				if (!(this.$refs.el && msg.source === this.$refs.el.contentWindow))
+					return;
 
 				if (msg.data && msg.data.error) {
 					this.handleError(msg.data.error);
@@ -151,25 +152,14 @@
 								new Blob(
 									[
 										`<html>
-	                    <head></head>
-	                    <body>
-	                      <script>
-	                        window.addEventListener('error', (e) => {
-	                          ;(window.parent || window.opener).postMessage({
-	                            error: e.error ? {
-	                              message: e.error.message,
-	                              stack: e.error.stack,
-	                            } : {
-	                              message: e.message,
-	                            }
-	                          })
-	                        })
-	                      <\/script>
-	                      <script>
-	                  ${this.value}
-	                      <\/script>
-	                    </body>
-	                  </html>`
+	                      <head></head>
+	                      <body>
+	                        <script>${iframeErrorHandler.toString()}<\/script>
+	                        <script>
+	                          ${this.value}
+	                        <\/script>
+	                      </body>
+	                    </html>`
 									],
 									{ type: "text/html" }
 								)
@@ -187,19 +177,8 @@
 							const html = URL.createObjectURL(
 								new Blob(
 									[
-										`<script>
-	                    window.addEventListener('error', (e) => {
-	                      ;(window.parent || window.opener).postMessage({
-	                        error: e.error ? {
-	                          message: e.error.message,
-	                          stack: e.error.stack,
-	                        } : {
-	                          message: e.message,
-	                        }
-	                      })
-	                    })
-	                  <\/script>
-	                  ` + this.value
+										`<script>${iframeErrorHandler.toString()}<\/script>` +
+											this.value
 									],
 									{
 										type: "text/html"
@@ -230,4 +209,42 @@
 		const styles = document.querySelectorAll("style");
 		return Array.from(links).concat(Array.from(styles));
 	}
+
+	const iframeErrorHandler = `
+			function onError(e) {
+				let error;
+
+				if (
+					window.PromiseRejectionEvent &&
+					e instanceof PromiseRejectionEvent
+				) {
+					if (e.reason instanceof Error) {
+						error = {
+							message: e.reason.message,
+							stack: e.reason.stack
+						};
+					} else {
+						error = {
+							message: e.reason
+						};
+					}
+				} else if (e.error) {
+					error = {
+						message: e.error.message,
+						stack: e.error.stack
+					};
+				} else {
+					error = {
+						message: e.message
+					};
+				}
+
+				const parentWindow = window.parent || window.opener;
+
+				parentWindow.postMessage({ error });
+			}
+
+			window.addEventListener("error", onError);
+			window.addEventListener("unhandledrejection", onError);
+	  `;
 </script>
