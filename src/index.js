@@ -1,12 +1,12 @@
 import Vue from 'vue'
-import CodeVue from './CodeVue'
+import LiveCode from './LiveCode'
 
 const Components = {
-    CodeVue
+	LiveCode,
 }
 
 for (const name of Object.keys(Components)) {
-    Vue.component(name, Components[name])
+	Vue.component(name, Components[name])
 }
 
-export {CodeVue}
+export {LiveCode}

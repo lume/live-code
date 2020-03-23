@@ -3,8 +3,8 @@ import Test from './Test.vue'
 
 Vue.config.productionTip = false
 
-// TODO test code-vue here
+// TODO test live-code here
 
 new Vue({
-  render: h => h(Test),
+	render: h => h(Test),
 }).$mount('#app')

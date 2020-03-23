@@ -1,46 +1,46 @@
 <template>
 	<div>
 		<h2>
-			This example runs vanilla JavaScript in the current browsing context
-			(careful, it can pollute the current context!)
+			This example runs vanilla JavaScript in the current browsing context (careful, it can pollute the current
+			context!)
 		</h2>
 
-		<code-vue :template="script" mode="script"></code-vue>
+		<live-code :template="script" mode="script"></live-code>
 
 		<h2>
-			This example runs vanilla JavaScript inside an iframe, in a script
-			tag in the body. (safe, it won't pollute the current context)
+			This example runs vanilla JavaScript inside an iframe, in a script tag in the body. (safe, it won't pollute
+			the current context)
 		</h2>
 
-		<code-vue :template="scriptIframe" mode="script>iframe"></code-vue>
+		<live-code :template="scriptIframe" mode="script>iframe"></live-code>
 
 		<h2>
 			This example runs HTML code inside an iframe. (safe, it won't pollute the current context)
 		</h2>
 
-		<code-vue :template="htmlIframe" mode="html>iframe"></code-vue>
+		<live-code :template="htmlIframe" mode="html>iframe"></live-code>
 
 		<h2>
 			This one runs a Vue component right inside the same DOM context.
 		</h2>
 
-		<code-vue :template="code" mode="vue"></code-vue>
+		<live-code :template="code" mode="vue"></live-code>
 
 		<h2>This one outputs Vue DOM into an iframe.</h2>
 
-		<code-vue :template="code2" mode="vue>iframe"></code-vue>
+		<live-code :template="code2" mode="vue>iframe"></live-code>
 	</div>
 </template>
 
 <script>
-	import CodeVue from "./CodeVue";
+import LiveCode from './LiveCode'
 
-	export default {
-		components: { CodeVue },
+export default {
+	components: {LiveCode},
 
-		data: () => ({
-			/* eslint-disable no-useless-escape */
-            htmlIframe: `<style>
+	data: () => ({
+		/* eslint-disable no-useless-escape */
+		htmlIframe: `<style>
     body {
         background: skyblue;
         width: 100%;
@@ -60,7 +60,7 @@
 <\/script>
 `,
 
-			script: `window.buttonClick = () => {
+		script: `window.buttonClick = () => {
     document.body.insertAdjacentHTML(
         'afterbegin',
         '<p>Polluted!</p>'
@@ -74,7 +74,7 @@ document.body.insertAdjacentHTML(
 )
 `,
 
-            scriptIframe: `document.head.innerHTML = \`
+		scriptIframe: `document.head.innerHTML = \`
   <style>
     body {
       background: skyblue;
@@ -94,7 +94,7 @@ setInterval(() => {
 }, 1000)
 `,
 
-			code: `<template>
+		code: `<template>
     <h1>Count: {{count}}</h1>
 </template>
 
@@ -117,7 +117,7 @@ setInterval(() => {
     }
 <\/script>`,
 
-			code2: `<template>
+		code2: `<template>
     <h1>Count: {{count}}</h1>
 </template>
 
@@ -145,7 +145,7 @@ setInterval(() => {
             }, 200);
         },
     }
-<\/script>`
-		})
-	};
+<\/script>`,
+	}),
+}
 </script>
