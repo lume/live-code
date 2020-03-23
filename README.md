@@ -2,32 +2,8 @@
 
 Edit snippets of code and see the result update live.
 
-## Project setup
+## Run examples
 
 ```
-npm install
-```
-
-### Compiles and hot-reloads for development
-
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-
-```
-npm run build
-```
-
-### Run your tests
-
-```
-npm run test
-```
-
-### Lints and fixes files
-
-```
-npm run lint
+npm start
 ```
