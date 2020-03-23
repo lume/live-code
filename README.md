@@ -1,9 +1,12 @@
-# live-code
+# @lume/live-code
 
-Edit snippets of code and see the result update live.
+A Vue component that gives you a code editor to edit snippets of code and see
+the results update live.
 
-## Run examples
+#### `npm install @lume/live-code`
+
+## Run the examples
 
 ```
-npm start
+npm install && npm start
 ```
