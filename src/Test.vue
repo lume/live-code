@@ -33,14 +33,14 @@
 </template>
 
 <script>
-import LiveCode from './LiveCode'
+	import LiveCode from './LiveCode'
 
-export default {
-	components: {LiveCode},
+	export default {
+		components: {LiveCode},
 
-	data: () => ({
-		/* eslint-disable no-useless-escape */
-		htmlIframe: `<style>
+		data: () => ({
+			/* eslint-disable no-useless-escape */
+			htmlIframe: /*html*/ `<style>
     body {
         background: skyblue;
         width: 100%;
@@ -60,7 +60,7 @@ export default {
 <\/script>
 `,
 
-		script: `window.buttonClick = () => {
+			script: `window.buttonClick = () => {
     document.body.insertAdjacentHTML(
         'afterbegin',
         '<p>Polluted!</p>'
@@ -74,14 +74,14 @@ document.body.insertAdjacentHTML(
 )
 `,
 
-		scriptIframe: `document.head.innerHTML = \`
-  <style>
-    body {
-      background: skyblue;
-      width: 100%;
-      height: 100%;
-    }
-  </style>
+			scriptIframe: `document.head.innerHTML = \`
+    <style>
+        body {
+            background: skyblue;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 \`
 
 let count = 0
@@ -94,7 +94,7 @@ setInterval(() => {
 }, 1000)
 `,
 
-		code: `<template>
+			code: `<template>
     <h1>Count: {{count}}</h1>
 </template>
 
@@ -117,7 +117,7 @@ setInterval(() => {
     }
 <\/script>`,
 
-		code2: `<template>
+			code2: `<template>
     <h1>Count: {{count}}</h1>
 </template>
 
@@ -146,6 +146,6 @@ setInterval(() => {
         },
     }
 <\/script>`,
-	}),
-}
+		}),
+	}
 </script>

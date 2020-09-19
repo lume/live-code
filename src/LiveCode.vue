@@ -1,16 +1,16 @@
 <script>
-	import debounce from "lodash/debounce";
-	import unescape from "lodash/unescape";
-	import Editor from "./Editor";
-	import Preview from "./Preview";
-	import parser from "./utils/parser";
-	import compiler from "./utils/compiler";
-	import evalJS from "./utils/transform";
+	import debounce from 'lodash/debounce'
+	import unescape from 'lodash/unescape'
+	import Editor from './Editor'
+	import Preview from './Preview'
+	import parser from './utils/parser'
+	import compiler from './utils/compiler'
+	import evalJS from './utils/transform'
 
 	export default {
 		components: {
 			Preview,
-			Editor
+			Editor,
 		},
 
 		props: {
@@ -19,7 +19,7 @@
 			keepData: Boolean,
 			value: String,
 			scope: Object,
-			autorun: { type: Boolean, default: true },
+			autorun: {type: Boolean, default: true},
 
 			/**
 			 * Specify the editor mode:
@@ -29,159 +29,168 @@
 			 * - script>iframe
 			 * - html>iframe
 			 */
-			mode: { type: String, default: "vue" },
+			mode: {type: String, default: 'vue'},
 
 			// if autorun is true, then autorun is debounced by this amount after user
 			// types into the code editor.
-			debounce: { type: Number, default: 0 }
+			debounce: {type: Number, default: 0},
 		},
 
 		data() {
 			return {
-				exports: "",
-				styles: "",
-				error: "",
-				editorValue: "",
+				exports: '',
+				styles: '',
+				error: '',
+				editorValue: '',
 				initialValue: this.value,
-				forceRender: 0
-			};
+				forceRender: 0,
+			}
 		},
 
 		watch: {
 			value: {
 				immediate: true,
 				handler(val) {
-					this.editorValue = val;
-					val && this.executeCodeDebounced();
-				}
-			}
+					this.editorValue = val
+					val && this.executeCodeDebounced()
+				},
+			},
 		},
 
 		created() {
-			this.executeCodeDebounced = debounce(this.executeCode, this.debounce);
+			this.executeCodeDebounced = debounce(this.executeCode, this.debounce)
 
-			if (this.$isServer) return;
+			if (this.$isServer) return
 
-			let content = this.template;
+			let content = this.template
 
 			if (/^[.#]/.test(this.template)) {
-				const html = document.querySelector(this.template);
-				if (!html) throw Error(`${this.template} is not found`);
+				const html = document.querySelector(this.template)
+				if (!html) throw Error(`${this.template} is not found`)
 
-				content = unescape(html.innerHTML);
+				content = unescape(html.innerHTML)
 			}
 
 			if (content) {
-				this.initialValue = content;
-				this.editorValue = content;
-				this.executeCode();
-				this.$emit("input", content);
+				this.initialValue = content
+				this.editorValue = content
+				this.executeCode()
+				this.$emit('input', content)
 			}
 		},
 
 		methods: {
 			handleError(err) {
+				// TODO For now we skip harmless ResizeObserver errors. Chrome has a
+				// bug that causes this error to be emitted when it shouldn't. We
+				// should remove this block once the bug is fixed. See
+				// https://github.com/w3c/csswg-drafts/issues/5487
+				if (err.message.includes('ResizeObserver loop limit exceeded')) {
+					console.warn(err)
+					return
+				}
+
 				// eslint-disable-next-line
 				// debugger;
-				this.error = err.message + " (see console)";
-				console.error(err); // eslint-disable-line
+				this.error = err.message + ' (see console)'
+				console.error(err) // eslint-disable-line
 			},
 
 			handleChange(val) {
-				this.editorValue = val;
-				this.autorun && this.executeCodeDebounced();
-				this.$emit("input", val);
+				this.editorValue = val
+				this.autorun && this.executeCodeDebounced()
+				this.$emit('input', val)
 			},
 
 			rerun() {
-				this.executeCodeDebounced.cancel();
-				this.executeCode();
+				this.executeCodeDebounced.cancel()
+				this.executeCode()
 
 				// force Vue to re-make the preview, in case no values have changed
-				this.forceRender++;
+				this.forceRender++
 			},
 
 			executeCode() {
-				this.error = "";
-				this.styles = "";
+				this.error = ''
+				this.styles = ''
 
 				switch (this.mode) {
-					case "vue":
-					case "vue>iframe": {
-						const parsed = parser(this.editorValue);
+					case 'vue':
+					case 'vue>iframe': {
+						const parsed = parser(this.editorValue)
 
 						if (parsed.error) {
 							// eslint-disable-next-line
 							// debugger;
-							this.error = parsed.error.message + "(see console)";
-							console.error(parsed.error); // eslint-disable-line
-							return;
+							this.error = parsed.error.message + '(see console)'
+							console.error(parsed.error) // eslint-disable-line
+							return
 						}
 
 						if (!parsed.script && !parsed.template) {
-							this.error = "no data";
-							console.error("no data"); // eslint-disable-line
+							this.error = 'no data'
+							console.error('no data') // eslint-disable-line
 						}
 
-						const compiled = compiler(parsed.script);
+						const compiled = compiler(parsed.script)
 
 						if (compiled.error) {
 							// eslint-disable-next-line
 							// debugger;
-							this.error = compiled.error.message + "(see console)";
-							console.error(compiled.error); // eslint-disable-line
-							return;
+							this.error = compiled.error.message + '(see console)'
+							console.error(compiled.error) // eslint-disable-line
+							return
 						}
 
-						let exports;
+						let exports
 
 						try {
-							exports = evalJS(compiled.script, this.scope);
+							exports = evalJS(compiled.script, this.scope)
 						} catch (e) {
 							// eslint-disable-next-line
 							// debugger;
-							this.error = e.message + " (see console)";
-							console.error(e); // eslint-disable-line
-							return;
+							this.error = e.message + ' (see console)'
+							console.error(e) // eslint-disable-line
+							return
 						}
 
 						if (parsed.template) {
-							exports.template = parsed.template;
+							exports.template = parsed.template
 						}
 
-						this.exports = exports;
+						this.exports = exports
 
-						if (parsed.styles) this.styles = parsed.styles.join(" ");
+						if (parsed.styles) this.styles = parsed.styles.join(' ')
 
-						break;
+						break
 					}
 
-					case "script": {
+					case 'script': {
 						try {
-							evalJS(this.editorValue, this.scope, false);
-							break;
+							evalJS(this.editorValue, this.scope, false)
+							break
 						} catch (e) {
 							// eslint-disable-next-line
 							// debugger;
-							this.error = e.message + " (see console)";
-							console.error(e); // eslint-disable-line
-							break;
+							this.error = e.message + ' (see console)'
+							console.error(e) // eslint-disable-line
+							break
 						}
 					}
 
-					case "script>iframe": {
-						this.exports = this.editorValue;
-						break;
+					case 'script>iframe': {
+						this.exports = this.editorValue
+						break
 					}
 
-					case "html>iframe": {
-						this.exports = this.editorValue;
-						break;
+					case 'html>iframe': {
+						this.exports = this.editorValue
+						break
 					}
 				}
-			}
-		}
-	};
+			},
+		},
+	}
 </script>
 
 <template>
@@ -221,7 +230,7 @@
 <style lang="scss">
 	.vuep {
 		display: flex;
-		font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+		font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
 		position: relative;
 		height: 400px;
 		width: 100%;
@@ -285,7 +294,7 @@
 		}
 	}
 
-	[class^="vuep-scoped-"] {
+	[class^='vuep-scoped-'] {
 		height: inherit;
 	}
 

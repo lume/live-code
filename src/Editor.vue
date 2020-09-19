@@ -4,12 +4,7 @@
 		specified, so we made a dummy one ("internalCode" property) rather than using
 		the :code="" attribute. -->
 		<!-- :code="value" -->
-		<prism-editor
-			v-model="internalCode"
-			@change="handleChange"
-			:language="syntax"
-			:line-numbers="true"
-		/>
+		<prism-editor v-model="internalCode" @change="handleChange" :language="syntax" :line-numbers="true" />
 	</div>
 </template>
 
@@ -31,8 +26,8 @@
 </style>
 
 <script>
-	import PrismEditor from "vue-prism-editor";
-	import "vue-prism-editor/dist/VuePrismEditor.css";
+	import PrismEditor from 'vue-prism-editor'
+	import 'vue-prism-editor/dist/VuePrismEditor.css'
 
 	// TODO pass options to Prism
 	// const DEFAULT_OPTIONS = {
@@ -43,39 +38,39 @@
 	// };
 
 	export default {
-		components: { PrismEditor },
-		props: ["value", "options", "mode"],
+		components: {PrismEditor},
+		props: ['value', 'options', 'mode'],
 
 		data() {
 			return {
-				internalCode: this.value
-			};
+				internalCode: this.value,
+			}
 		},
 
 		computed: {
 			syntax() {
 				switch (true) {
-                    case startsWith(this.mode, 'vue', 'html'): {
-						return "html";
+					case startsWith(this.mode, 'vue', 'html'): {
+						return 'html'
 					}
-                    case startsWith(this.mode, 'script'): {
-						return "js";
+					case startsWith(this.mode, 'script'): {
+						return 'js'
 					}
 					default: {
-						return "js";
+						return 'js'
 					}
 				}
-			}
+			},
 		},
 
 		methods: {
 			handleChange(code) {
-				this.$emit("change", code);
-			}
-		}
-    };
-    
-    function startsWith(string, ...strings) {
-        return strings.some(s => string.startsWith(s))
-    }
+				this.$emit('change', code)
+			},
+		},
+	}
+
+	function startsWith(string, ...strings) {
+		return strings.some(s => string.startsWith(s))
+	}
 </script>
