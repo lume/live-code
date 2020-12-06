@@ -227,35 +227,35 @@
 	</div>
 </template>
 
-<style lang="scss">
+<style>
 	.vuep {
 		display: flex;
 		font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
 		position: relative;
 		height: 400px;
 		width: 100%;
+	}
 
-		::-webkit-scrollbar-track {
-			border-radius: 10px;
-			background-color: #f5f5f5;
-		}
+	.vuep ::-webkit-scrollbar-track {
+		border-radius: 10px;
+		background-color: #f5f5f5;
+	}
 
-		::-webkit-scrollbar {
-			width: 8px;
-			height: 8px;
-			background-color: #f5f5f5;
-		}
+	.vuep ::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+		background-color: #f5f5f5;
+	}
 
-		::-webkit-scrollbar-thumb {
-			border-radius: 8px;
-			background-color: #bbb;
-			transition: all 0.5s;
-		}
+	.vuep ::-webkit-scrollbar-thumb {
+		border-radius: 8px;
+		background-color: #bbb;
+		transition: all 0.5s;
+	}
 
-		::-webkit-scrollbar-thumb:hover {
-			border-radius: 8px;
-			background-color: #777;
-		}
+	.vuep ::-webkit-scrollbar-thumb:hover {
+		border-radius: 8px;
+		background-color: #777;
 	}
 
 	.vuep-editor,
@@ -283,15 +283,13 @@
 		box-sizing: border-box;
 	}
 
-	.vuep-preview {
-		iframe {
-			display: block;
-			width: 100%;
-			height: 100%;
-			margin: 0;
-			padding: 0;
-			border: none;
-		}
+	.vuep-preview iframe {
+		display: block;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		border: none;
 	}
 
 	[class^='vuep-scoped-'] {

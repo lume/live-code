@@ -8,13 +8,12 @@
 	</div>
 </template>
 
-<style lang="scss">
+<style>
 	.prism-editor-wrapper {
 		background: #f7f7f7;
-
-		pre {
-			outline: none;
-		}
+	}
+	.prism-editor-wrapper pre {
+		outline: none;
 	}
 
 	.prism-editor__line-numbers {
