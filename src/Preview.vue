@@ -182,41 +182,41 @@
 		return Array.from(links).concat(Array.from(styles))
 	}
 
-	const iframeErrorHandler = `
-	function onError(e) {
-		let error;
+	const iframeErrorHandler = /*js*/ `
+		function onError(e) {
+			let error;
 
-		if (
-			window.PromiseRejectionEvent &&
-			e instanceof PromiseRejectionEvent
-		) {
-			if (e.reason instanceof Error) {
+			if (
+				window.PromiseRejectionEvent &&
+				e instanceof PromiseRejectionEvent
+			) {
+				if (e.reason instanceof Error) {
+					error = {
+						message: e.reason.message,
+						stack: e.reason.stack
+					};
+				} else {
+					error = {
+						message: e.reason
+					};
+				}
+			} else if (e.error) {
 				error = {
-					message: e.reason.message,
-					stack: e.reason.stack
+					message: e.error.message,
+					stack: e.error.stack
 				};
 			} else {
 				error = {
-					message: e.reason
+					message: e.message
 				};
 			}
-		} else if (e.error) {
-			error = {
-				message: e.error.message,
-				stack: e.error.stack
-			};
-		} else {
-			error = {
-				message: e.message
-			};
+
+			const parentWindow = window.parent || window.opener;
+
+			parentWindow.postMessage({ error });
 		}
 
-		const parentWindow = window.parent || window.opener;
-
-		parentWindow.postMessage({ error });
-	}
-
-	window.addEventListener("error", onError);
-	window.addEventListener("unhandledrejection", onError);
-`
+		window.addEventListener("error", onError);
+		window.addEventListener("unhandledrejection", onError);
+	`
 </script>
