@@ -1,3 +1,127 @@
+<template>
+	<div class="vuep">
+		<editor
+			ref="editor"
+			class="vuep-editor"
+			:options="options"
+			:mode="mode"
+			@change="handleChange"
+			:value="initialValue"
+		>
+		</editor>
+
+		<div v-if="error" class="vuep-error">
+			<pre>{{ error }}</pre>
+		</div>
+
+		<preview
+			v-if="!error"
+			:key="forceRender"
+			class="vuep-preview"
+			:value="exports"
+			:styles="styles"
+			:keep-data="keepData"
+			:mode="mode"
+			@error="handleError"
+		>
+		</preview>
+
+		<button class="vuep-rerun" @click="rerun">
+			rerun
+		</button>
+	</div>
+</template>
+
+<style>
+	.vuep {
+		display: flex;
+		font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+		position: relative;
+		height: 400px;
+		width: 100%;
+	}
+
+	.vuep ::-webkit-scrollbar-track {
+		border-radius: 10px;
+		background-color: #f5f5f5;
+	}
+
+	.vuep ::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+		background-color: #f5f5f5;
+	}
+
+	.vuep ::-webkit-scrollbar-thumb {
+		border-radius: 8px;
+		background-color: #bbb;
+		transition: all 0.5s;
+	}
+
+	.vuep ::-webkit-scrollbar-thumb:hover {
+		border-radius: 8px;
+		background-color: #777;
+	}
+
+	.vuep-editor,
+	.vuep-preview,
+	.vuep-error {
+		border-radius: 2px;
+		height: inherit;
+		overflow: auto;
+		width: 50%;
+	}
+
+	.vuep-editor {
+		line-height: 1.2em;
+		margin-right: 10px;
+	}
+
+	.vuep-error {
+		color: #f66;
+		padding: 25px 35px;
+	}
+
+	.vuep-preview,
+	.vuep-error {
+		border: 1px solid #eee;
+		box-sizing: border-box;
+	}
+
+	.vuep-preview iframe {
+		display: block;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		border: none;
+	}
+
+	[class^='vuep-scoped-'] {
+		height: inherit;
+	}
+
+	.vuep-rerun {
+		position: absolute;
+		right: 0;
+	}
+
+	@media (max-width: 600px) {
+		.vuep {
+			display: block;
+			height: auto;
+		}
+
+		.vuep-editor,
+		.vuep-preview,
+		.vuep-error {
+			margin: 0 0 15px 0;
+			height: 400px;
+			width: 100%;
+		}
+	}
+</style>
+
 <script>
 	import debounce from 'lodash/debounce'
 	import unescape from 'lodash/unescape'
@@ -193,127 +317,3 @@
 		},
 	}
 </script>
-
-<template>
-	<div class="vuep">
-		<editor
-			ref="editor"
-			class="vuep-editor"
-			:options="options"
-			:mode="mode"
-			@change="handleChange"
-			:value="initialValue"
-		>
-		</editor>
-
-		<div v-if="error" class="vuep-error">
-			<pre>{{ error }}</pre>
-		</div>
-
-		<preview
-			v-if="!error"
-			:key="forceRender"
-			class="vuep-preview"
-			:value="exports"
-			:styles="styles"
-			:keep-data="keepData"
-			:mode="mode"
-			@error="handleError"
-		>
-		</preview>
-
-		<button class="vuep-rerun" @click="rerun">
-			rerun
-		</button>
-	</div>
-</template>
-
-<style>
-	.vuep {
-		display: flex;
-		font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
-		position: relative;
-		height: 400px;
-		width: 100%;
-	}
-
-	.vuep ::-webkit-scrollbar-track {
-		border-radius: 10px;
-		background-color: #f5f5f5;
-	}
-
-	.vuep ::-webkit-scrollbar {
-		width: 8px;
-		height: 8px;
-		background-color: #f5f5f5;
-	}
-
-	.vuep ::-webkit-scrollbar-thumb {
-		border-radius: 8px;
-		background-color: #bbb;
-		transition: all 0.5s;
-	}
-
-	.vuep ::-webkit-scrollbar-thumb:hover {
-		border-radius: 8px;
-		background-color: #777;
-	}
-
-	.vuep-editor,
-	.vuep-preview,
-	.vuep-error {
-		border-radius: 2px;
-		height: inherit;
-		overflow: auto;
-		width: 50%;
-	}
-
-	.vuep-editor {
-		line-height: 1.2em;
-		margin-right: 10px;
-	}
-
-	.vuep-error {
-		color: #f66;
-		padding: 25px 35px;
-	}
-
-	.vuep-preview,
-	.vuep-error {
-		border: 1px solid #eee;
-		box-sizing: border-box;
-	}
-
-	.vuep-preview iframe {
-		display: block;
-		width: 100%;
-		height: 100%;
-		margin: 0;
-		padding: 0;
-		border: none;
-	}
-
-	[class^='vuep-scoped-'] {
-		height: inherit;
-	}
-
-	.vuep-rerun {
-		position: absolute;
-		right: 0;
-	}
-
-	@media (max-width: 600px) {
-		.vuep {
-			display: block;
-			height: auto;
-		}
-
-		.vuep-editor,
-		.vuep-preview,
-		.vuep-error {
-			margin: 0 0 15px 0;
-			height: 400px;
-			width: 100%;
-		}
-	}
-</style>
