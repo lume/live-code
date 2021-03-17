@@ -86,6 +86,7 @@
 				// should remove this block once the bug is fixed. See
 				// https://github.com/w3c/csswg-drafts/issues/5487
 				if (err.message.includes('ResizeObserver loop limit exceeded')) {
+					// eslint-disable-next-line
 					console.warn(err)
 					return
 				}
