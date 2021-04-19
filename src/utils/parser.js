@@ -1,4 +1,4 @@
-export default function(input) {
+export default function parseVueSFC(input) {
 	const html = document.createElement('template')
 	const content = (html.innerHTML = input.trim())
 

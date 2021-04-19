@@ -1,4 +1,4 @@
-import evalJS from './transform.js'
+import evalJSWithScope from './transform.js'
 
 const JSMODULE_REG = /\.((js)|(jsx))$/
 
@@ -27,6 +27,6 @@ function getAndCache(url) {
 	xhr.open('GET', url, false)
 	xhr.send()
 	const script = xhr.responseText
-	cache[url] = evalJS(script)
+	cache[url] = evalJSWithScope(script)
 	return cache[url]
 }

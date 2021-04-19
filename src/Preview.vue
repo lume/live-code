@@ -28,7 +28,7 @@
 			},
 
 			className() {
-				return 'vuep-scoped-' + this._uid
+				return 'live-code-scoped-' + this._uid
 			},
 
 			iframe() {

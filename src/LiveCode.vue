@@ -1,39 +1,42 @@
 <template>
-	<div class="vuep">
+	<div class="live-code">
 		<editor
 			ref="editor"
-			class="vuep-editor"
+			class="live-code-editor"
 			:options="options"
 			:mode="mode"
 			@change="handleChange"
-			:value="initialValue"
+			:value="editorValue"
 		>
 		</editor>
 
-		<div v-if="error" class="vuep-error">
+		<div v-if="error" class="live-code-error">
 			<pre>{{ error }}</pre>
 		</div>
 
 		<preview
 			v-if="!error"
 			:key="forceRender"
-			class="vuep-preview"
+			class="live-code-preview"
 			:value="exports"
 			:styles="styles"
 			:keep-data="keepData"
 			:mode="mode"
 			@error="handleError"
-		>
-		</preview>
+		></preview>
 
-		<button class="vuep-rerun" @click="rerun">
+		<button class="live-code-rerun" @click="rerun">
 			rerun
+		</button>
+
+		<button class="live-code-reset" @click="reset">
+			reset
 		</button>
 	</div>
 </template>
 
 <style>
-	.vuep {
+	.live-code {
 		display: flex;
 		font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
 		position: relative;
@@ -41,54 +44,32 @@
 		width: 100%;
 	}
 
-	.vuep ::-webkit-scrollbar-track {
-		border-radius: 10px;
-		background-color: #f5f5f5;
-	}
-
-	.vuep ::-webkit-scrollbar {
-		width: 8px;
-		height: 8px;
-		background-color: #f5f5f5;
-	}
-
-	.vuep ::-webkit-scrollbar-thumb {
-		border-radius: 8px;
-		background-color: #bbb;
-		transition: all 0.5s;
-	}
-
-	.vuep ::-webkit-scrollbar-thumb:hover {
-		border-radius: 8px;
-		background-color: #777;
-	}
-
-	.vuep-editor,
-	.vuep-preview,
-	.vuep-error {
+	.live-code-editor,
+	.live-code-preview,
+	.live-code-error {
 		border-radius: 2px;
 		height: inherit;
 		overflow: auto;
 		width: 50%;
 	}
 
-	.vuep-editor {
+	.live-code-editor {
 		line-height: 1.2em;
 		margin-right: 10px;
 	}
 
-	.vuep-error {
+	.live-code-error {
 		color: #f66;
 		padding: 25px 35px;
 	}
 
-	.vuep-preview,
-	.vuep-error {
+	.live-code-preview,
+	.live-code-error {
 		border: 1px solid #eee;
 		box-sizing: border-box;
 	}
 
-	.vuep-preview iframe {
+	.live-code-preview iframe {
 		display: block;
 		width: 100%;
 		height: 100%;
@@ -97,28 +78,57 @@
 		border: none;
 	}
 
-	[class^='vuep-scoped-'] {
+	[class^='live-code-scoped-'] {
 		height: inherit;
 	}
 
-	.vuep-rerun {
+	.live-code-rerun {
 		position: absolute;
 		right: 0;
 	}
 
+	.live-code-reset {
+		position: absolute;
+		right: 40;
+	}
+
 	@media (max-width: 600px) {
-		.vuep {
+		.live-code {
 			display: block;
 			height: auto;
 		}
 
-		.vuep-editor,
-		.vuep-preview,
-		.vuep-error {
+		.live-code-editor,
+		.live-code-preview,
+		.live-code-error {
 			margin: 0 0 15px 0;
 			height: 400px;
 			width: 100%;
 		}
+	}
+
+	/* Scrollbars */
+
+	.live-code ::-webkit-scrollbar-track {
+		border-radius: 10px;
+		background-color: #f5f5f5;
+	}
+
+	.live-code ::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+		background-color: #f5f5f5;
+	}
+
+	.live-code ::-webkit-scrollbar-thumb {
+		border-radius: 8px;
+		background-color: #bbb;
+		transition: all 0.5s;
+	}
+
+	.live-code ::-webkit-scrollbar-thumb:hover {
+		border-radius: 8px;
+		background-color: #777;
 	}
 </style>
 
@@ -127,9 +137,9 @@
 	import unescape from 'lodash/unescape'
 	import Editor from './Editor'
 	import Preview from './Preview'
-	import parser from './utils/parser'
+	import parseVueSFC from './utils/parser'
 	import compiler from './utils/compiler'
-	import evalJS from './utils/transform'
+	import evalJSWithScope from './utils/transform'
 
 	export default {
 		components: {
@@ -157,7 +167,7 @@
 
 			// if autorun is true, then autorun is debounced by this amount after user
 			// types into the code editor.
-			debounce: {type: Number, default: 0},
+			debounce: {type: Number, default: 50},
 		},
 
 		data() {
@@ -184,11 +194,11 @@
 		created() {
 			this.executeCodeDebounced = debounce(this.executeCode, this.debounce)
 
-			if (this.$isServer) return
-
 			let content = this.template
 
+			// Is template starts with . or #,
 			if (/^[.#]/.test(this.template)) {
+				// consider it a selector from which to get the code from.
 				const html = document.querySelector(this.template)
 				if (!html) throw Error(`${this.template} is not found`)
 
@@ -231,7 +241,14 @@
 				this.executeCodeDebounced.cancel()
 				this.executeCode()
 
-				// force Vue to re-make the preview, in case no values have changed
+				// force Vue to re-make the preview, in case no values for preview have changed
+				this.forceRender++
+			},
+
+			reset() {
+				this.handleChange(this.initialValue)
+
+				// force Vue to re-make the preview, in case no values for preview have changed
 				this.forceRender++
 			},
 
@@ -242,7 +259,7 @@
 				switch (this.mode) {
 					case 'vue':
 					case 'vue>iframe': {
-						const parsed = parser(this.editorValue)
+						const parsed = parseVueSFC(this.editorValue)
 
 						if (parsed.error) {
 							// eslint-disable-next-line
@@ -270,7 +287,7 @@
 						let exports
 
 						try {
-							exports = evalJS(compiled.script, this.scope)
+							exports = evalJSWithScope(compiled.script, this.scope)
 						} catch (e) {
 							// eslint-disable-next-line
 							// debugger;
@@ -292,7 +309,7 @@
 
 					case 'script': {
 						try {
-							evalJS(this.editorValue, this.scope, false)
+							evalJSWithScope(this.editorValue, this.scope, false)
 							break
 						} catch (e) {
 							// eslint-disable-next-line

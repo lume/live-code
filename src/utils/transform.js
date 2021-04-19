@@ -5,7 +5,7 @@ window.require = require
  * Evaluate a script with the given scope. The code is wrapped with a basic
  * CommonJS wrapper, in case it exports anything.
  */
-export default function evalJS(script, scope = {}, module = true) {
+export default function evalJSWithScope(script, scope = {}, module = true) {
 	// https://www.npmjs.com/package/babel-standalone
 
 	let scopeDecl = ''

@@ -46,6 +46,15 @@
 			}
 		},
 
+		watch: {
+			value: {
+				immediate: true,
+				handler(val) {
+					this.internalCode = val
+				},
+			},
+		},
+
 		computed: {
 			syntax() {
 				switch (true) {
