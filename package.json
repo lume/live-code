@@ -10,7 +10,10 @@
 		"lint": "vue-cli-service lint",
 		"build": "vue-cli-service build --target lib --name live-code ./src/index.js",
 		"test": "npm run lint && npm run build",
-		"prepare": "npm run build"
+		"prepare": "npm run build",
+		"release:patch": "npm version patch --message 'v%s' && npm publish && git push --follow-tags",
+		"release:minor": "npm version minor --message 'v%s' && npm publish && git push --follow-tags",
+		"release:major": "npm version major --message 'v%s' && npm publish && git push --follow-tags"
 	},
 	"dependencies": {
 		"core-js": "^2.6.5",
