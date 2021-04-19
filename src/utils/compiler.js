@@ -1,3 +1,5 @@
+/* global Babel */
+
 /**
  * Compiles code with Babel, if Babel is present.
  */
