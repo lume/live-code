@@ -30,6 +30,7 @@
 		"eslint": "^5.16.0",
 		"eslint-plugin-vue": "^5.0.0",
 		"prismjs": "^1.17.1",
+		"strip-indent": "^3.0.0",
 		"vue-template-compiler": "^2.6.10"
 	},
 	"eslintConfig": {
