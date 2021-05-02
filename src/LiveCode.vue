@@ -1,60 +1,80 @@
 <template>
 	<div class="live-code">
-		<editor
-			ref="editor"
-			class="live-code-editor"
-			:options="options"
-			:mode="mode"
-			@change="handleChange"
-			:value="editorValue"
-		>
-		</editor>
+		<div class="live-code-edit-area">
+			<div class="live-code-reset">
+				<button @click="reset">reset</button>
+			</div>
 
-		<div v-if="error" class="live-code-error">
-			<pre>{{ error }}</pre>
+			<editor ref="editor" :options="options" :mode="mode" @change="handleChange" :value="editorValue"> </editor>
 		</div>
 
-		<preview
-			v-if="!error"
-			:key="forceRender"
-			class="live-code-preview"
-			:value="exports"
-			:styles="styles"
-			:keep-data="keepData"
-			:mode="mode"
-			@error="handleError"
-		></preview>
+		<div class="live-code-preview-area">
+			<div class="live-code-rerun">
+				<button @click="rerun">rerun</button>
+			</div>
 
-		<button class="live-code-rerun" @click="rerun">
-			rerun
-		</button>
+			<div v-if="error" class="live-code-error">
+				<pre>{{ error }}</pre>
+			</div>
 
-		<button class="live-code-reset" @click="reset">
-			reset
-		</button>
+			<preview
+				v-if="!error"
+				:key="forceRender"
+				:value="exports"
+				:styles="styles"
+				:keep-data="keepData"
+				:mode="mode"
+				@error="handleError"
+			></preview>
+		</div>
 	</div>
 </template>
 
 <style>
 	.live-code {
-		display: flex;
 		font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
-		position: relative;
-		height: 400px;
+		height: 420px;
 		width: 100%;
+
+		display: flex;
+	}
+
+	/* Button row */
+
+	.live-code-edit-area {
+		width: 50%;
+
+		display: flex;
+		flex-direction: column;
+	}
+
+	.live-code-rerun,
+	.live-code-reset {
+		flex-grow: 0;
+		height: 40px;
+	}
+
+	/* }}} */
+
+	/* Main area with editor and preview {{{ */
+
+	.live-code-preview-area {
+		width: 50%;
+
+		display: flex;
+		flex-direction: column;
 	}
 
 	.live-code-editor,
 	.live-code-preview,
 	.live-code-error {
+		flex-grow: 1;
 		border-radius: 2px;
-		height: inherit;
+		height: 100%;
 		overflow: auto;
-		width: 50%;
 	}
 
 	.live-code-editor {
-		line-height: 1.2em;
 		margin-right: 10px;
 	}
 
@@ -69,28 +89,15 @@
 		box-sizing: border-box;
 	}
 
-	.live-code-preview iframe {
-		display: block;
-		width: 100%;
-		height: 100%;
-		margin: 0;
-		padding: 0;
-		border: none;
-	}
-
-	[class^='live-code-scoped-'] {
+	/*[class^='live-code-scoped-'] {
 		height: inherit;
-	}
+	}*/
 
-	.live-code-rerun {
-		position: absolute;
-		right: 0;
-	}
+	/* }}} */
 
-	.live-code-reset {
-		position: absolute;
-		right: 40;
-	}
+	/* replace with ResizeObserver on parent for now. That is not overridable
+	by end users though, so later replace with container queries once it is
+	out in all browsers.
 
 	@media (max-width: 600px) {
 		.live-code {
@@ -106,6 +113,7 @@
 			width: 100%;
 		}
 	}
+	*/
 
 	/* Scrollbars */
 
@@ -196,8 +204,10 @@
 
 			let content = this.template
 
-			// Is template starts with . or #,
-			if (/^[.#]/.test(this.template)) {
+			const isSelector = /^[.#]/.test(this.template)
+
+			// If template starts with . or #
+			if (isSelector) {
 				// consider it a selector from which to get the code from.
 				const html = document.querySelector(this.template)
 				if (!html) throw Error(`${this.template} is not found`)

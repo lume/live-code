@@ -4,7 +4,7 @@
 	"main": "./dist/live-code.umd.js",
 	"scripts": {
 		"start": "npm run examples",
-		"dev": "npm run start",
+		"dev": "npm start",
 		"examples": "vue-cli-service serve",
 		"build:example": "vue-cli-service build",
 		"lint": "vue-cli-service lint",

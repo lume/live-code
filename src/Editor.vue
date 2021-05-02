@@ -1,5 +1,5 @@
 <template>
-	<div class="line-numbers">
+	<div class="live-code-editor line-numbers">
 		<!-- NOTE, syntax highlight (Prism) doesn't update unless there's a v-model
 		specified, so we made a dummy one ("internalCode" property) rather than using
 		the :code="" attribute. -->
@@ -9,6 +9,10 @@
 </template>
 
 <style>
+	.live-code-editor {
+		line-height: 1.2em;
+	}
+
 	.prism-editor-wrapper {
 		background: #f7f7f7;
 	}

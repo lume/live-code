@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="live-code-preview">
 		<iframe ref="el" v-if="iframe" :class="className"></iframe>
 
 		<div ref="el" v-if="!iframe" :class="className">
@@ -11,6 +11,21 @@
 		</div>
 	</div>
 </template>
+
+<style>
+	.live-code-preview iframe {
+		display: block;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		border: none;
+	}
+
+	.live-code-preview div {
+		height: 100%;
+	}
+</style>
 
 <script>
 	import Vue from 'vue/dist/vue.common'
@@ -28,6 +43,7 @@
 			},
 
 			className() {
+				// thi._uid is a property defined by Vue, unique to the instance.
 				return 'live-code-scoped-' + this._uid
 			},
 
