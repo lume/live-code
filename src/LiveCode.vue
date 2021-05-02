@@ -2,7 +2,7 @@
 	<div class="live-code">
 		<div class="live-code-edit-area">
 			<div class="live-code-reset">
-				<button @click="reset">reset</button>
+				<button @click="reset">Reset</button>
 			</div>
 
 			<editor ref="editor" :options="options" :mode="mode" @change="handleChange" :value="editorValue"> </editor>
@@ -10,7 +10,7 @@
 
 		<div class="live-code-preview-area">
 			<div class="live-code-rerun">
-				<button @click="rerun">rerun</button>
+				<button @click="rerun">Rerun</button>
 			</div>
 
 			<div v-if="error" class="live-code-error">
