@@ -43,6 +43,7 @@
 
 	.live-code-edit-area {
 		width: 50%;
+		padding-right: 10px;
 
 		display: flex;
 		flex-direction: column;
@@ -72,10 +73,6 @@
 		border-radius: 2px;
 		height: 100%;
 		overflow: auto;
-	}
-
-	.live-code-editor {
-		margin-right: 10px;
 	}
 
 	.live-code-error {
