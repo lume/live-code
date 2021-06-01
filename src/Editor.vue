@@ -22,9 +22,14 @@
 
 	.prism-editor__line-numbers {
 		padding-right: 5px;
-		margin-right: 5px;
 		border-right: 1px solid gray;
 		user-select: none;
+		padding-bottom: 16px;
+		margin-bottom: unset !important;
+		box-sizing: border-box;
+		min-height: unset !important;
+		height: auto !important;
+		min-height: 100% !important;
 	}
 </style>
 
@@ -32,13 +37,9 @@
 	import PrismEditor from 'vue-prism-editor'
 	import 'vue-prism-editor/dist/VuePrismEditor.css'
 
-	// TODO pass options to Prism
-	// const DEFAULT_OPTIONS = {
-	// 	lineNumbers: true,
-	// 	mode: "text/x-vue",
-	// 	theme: "material",
-	// 	tabSize: 2
-	// };
+	// TODO migrate to CodeMirror v6, which now has amazing touch/mobile
+	// support using contenteditable, among other great features over Prism
+	// such as AST-based syntax handling, tooltips, etc.
 
 	export default {
 		components: {PrismEditor},
