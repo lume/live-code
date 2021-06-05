@@ -9,8 +9,6 @@
 			<div class="live-code-edit-area live-code-tab-content">
 				<div class="live-code-buttons">
 					<div class="live-code-reset"><button @click="reset">Reset</button></div>
-					<!--<div class="live-code-rerun"><button @click="rerun">Rerun</button></div>
-					-->
 				</div>
 
 				<editor
@@ -28,8 +26,6 @@
 
 			<div class="live-code-preview-area live-code-tab-content">
 				<div class="live-code-buttons">
-					<!--<div class="live-code-reset"><button @click="reset">Reset</button></div>
-					-->
 					<div class="live-code-rerun"><button @click="rerun">Rerun</button></div>
 				</div>
 
@@ -60,6 +56,7 @@
 		display: flex;
 
 		--tab-color: deeppink;
+		--tab-text-color: white;
 	}
 
 	.live-code-tab-input {
@@ -70,20 +67,23 @@
 		display: inline;
 		width: 50%;
 		height: 40px;
-		line-height: 40px;
+	}
+
+	.live-code-smaller .live-code-tab-label > span {
+		display: block;
 		text-align: center;
 		vertical-align: middle;
-		background: #fff;
+		line-height: 40px;
 	}
 
 	.live-code-smaller .live-code-tab-input:nth-child(1):checked ~ label:nth-child(3),
 	.live-code-smaller .live-code-tab-input:nth-child(2):checked ~ label:nth-child(4) {
 		background: var(--tab-color);
-		color: white;
 	}
 
-	.live-code-smaller .live-code-tab-label > span {
-		vertical-align: middle;
+	.live-code-smaller .live-code-tab-input:nth-child(1):checked ~ label:nth-child(3) > span,
+	.live-code-smaller .live-code-tab-input:nth-child(2):checked ~ label:nth-child(4) > span {
+		color: var(--tab-text-color);
 	}
 
 	.live-code-tab-content:not(.live-code-smaller *) {
