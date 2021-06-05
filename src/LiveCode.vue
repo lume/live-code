@@ -58,6 +58,8 @@
 		width: 100%;
 		position: relative;
 		display: flex;
+
+		--tab-color: deeppink;
 	}
 
 	.live-code-tab-input {
@@ -76,7 +78,7 @@
 
 	.live-code-smaller .live-code-tab-input:nth-child(1):checked ~ label:nth-child(3),
 	.live-code-smaller .live-code-tab-input:nth-child(2):checked ~ label:nth-child(4) {
-		background: deeppink;
+		background: var(--tab-color);
 		color: white;
 	}
 
@@ -131,7 +133,7 @@
 		height: 100%;
 		border-radius: 0;
 		border: none;
-		border-top: 2px solid deeppink;
+		border-top: 2px solid var(--tab-color);
 	}
 
 	/* }}} */
