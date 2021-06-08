@@ -360,9 +360,7 @@
 					return
 				}
 
-				// eslint-disable-next-line
-				// debugger;
-				this.error = err.message + ' (see console)'
+				this.error = err.stack
 				console.error(err) // eslint-disable-line
 			},
 
@@ -382,9 +380,7 @@
 						const parsed = parseVueSFC(this.editorValue)
 
 						if (parsed.error) {
-							// eslint-disable-next-line
-							// debugger;
-							this.error = parsed.error.message + '(see console)'
+							this.error = parsed.error.stack
 							console.error(parsed.error) // eslint-disable-line
 							return
 						}
@@ -397,9 +393,7 @@
 						const compiled = compiler(parsed.script)
 
 						if (compiled.error) {
-							// eslint-disable-next-line
-							// debugger;
-							this.error = compiled.error.message + '(see console)'
+							this.error = compiled.error.stack
 							console.error(compiled.error) // eslint-disable-line
 							return
 						}
@@ -409,9 +403,7 @@
 						try {
 							exports = evalJSWithScope(compiled.script, this.scope)
 						} catch (e) {
-							// eslint-disable-next-line
-							// debugger;
-							this.error = e.message + ' (see console)'
+							this.error = e.stack
 							console.error(e) // eslint-disable-line
 							return
 						}
@@ -432,9 +424,7 @@
 							evalJSWithScope(this.editorValue, this.scope, false)
 							break
 						} catch (e) {
-							// eslint-disable-next-line
-							// debugger;
-							this.error = e.message + ' (see console)'
+							this.error = e.stack
 							console.error(e) // eslint-disable-line
 							break
 						}
