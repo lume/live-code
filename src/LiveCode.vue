@@ -354,14 +354,21 @@
 				// bug that causes this error to be emitted when it shouldn't. We
 				// should remove this block once the bug is fixed. See
 				// https://github.com/w3c/csswg-drafts/issues/5487
-				if (err.message.includes('ResizeObserver loop limit exceeded')) {
+				if (err && err.message && err.message.includes('ResizeObserver loop limit exceeded')) {
 					// eslint-disable-next-line
 					console.warn(err)
 					return
 				}
 
-				this.error = err.stack
-				console.error(err) // eslint-disable-line
+				this.error =
+					err && err.message ? (err.stack ? `ERROR: ${err.message}\n\n${err.stack}` : err.message) : err
+
+				setTimeout(() => {
+					// Throw it in a separate task so that it won't interrupt
+					// live-code's operation, but the user can view it in console
+					// if it is of any help.
+					throw err // eslint-disable-line
+				}, 0)
 			},
 
 			__handleChange(val) {
