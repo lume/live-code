@@ -3,6 +3,8 @@
 A Vue component that gives you a live code editor to edit snippets of code and see
 the live results as you type.
 
+This is used for code examples in [Lume's documentation](https://docs.lume.io).
+
 #### `npm install @lume/live-code`
 
 ## Run the examples
@@ -26,7 +28,5 @@ npm install && npm start
 - `debounce` - A number. If `autorun` is `true`, then the automatic re-run will happen only after a delay (as specified by this prop) after the user has stopped inputting text.
 - `mode` - The mode specified which type of code the editor will execute. Possible values are the following strings:
   - `"html>iframe"` - The code will be treated as HTML, and executed in an iframe.
-  - `"vue"` - The code will treated as a single-file Vue component with a `<template>`, `<style>` and `<script>`. The component will be mounted inside the preview area, and not in an iframe.
-  - `"vue>iframe"` - Similar to `"vue"`, but the component is output to an iframe.
   - `"script"` - The code is treated as a script, and executed right in the same context as the page. It can modify anything on the page!
   - `"script>iframe"` - The code is executed as a `<script>` inside an iframe. It can not modify the original page.

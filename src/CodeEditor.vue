@@ -2,8 +2,7 @@
 	<div class="live-code-editor line-numbers">
 		<!-- NOTE, syntax highlight (Prism) doesn't update unless there's a v-model
 		specified, so we made a dummy one ("internalCode" property) rather than using
-		the :code="" attribute. -->
-		<!-- :code="value" -->
+		the :code="value" attribute. -->
 		<prism-editor v-model="internalCode" @change="handleChange" :language="syntax" :line-numbers="true" />
 	</div>
 </template>
@@ -63,7 +62,7 @@
 		computed: {
 			syntax() {
 				switch (true) {
-					case startsWith(this.mode, 'vue', 'html'): {
+					case startsWith(this.mode, 'html'): {
 						return 'html'
 					}
 					case startsWith(this.mode, 'script'): {

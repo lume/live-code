@@ -8,27 +8,15 @@
 		<live-code :template="script" mode="script"></live-code>
 
 		<h2>
-			This example runs vanilla JavaScript inside an iframe, in a script tag in the body. (safe, it won't pollute
-			the current context)
+			This example runs vanilla JavaScript inside an iframe, in a script tag in the body. (safe, it won't pollute the
+			current context)
 		</h2>
 
 		<live-code :template="scriptIframe" mode="script>iframe"></live-code>
 
-		<h2>
-			This example runs HTML code inside an iframe. (safe, it won't pollute the current context)
-		</h2>
+		<h2>This example runs HTML code inside an iframe. (safe, it won't pollute the current context)</h2>
 
 		<live-code :template="htmlIframe" mode="html>iframe"></live-code>
-
-		<h2>
-			This one runs a Vue component right inside the same DOM context.
-		</h2>
-
-		<live-code :template="code" mode="vue"></live-code>
-
-		<h2>This one outputs Vue DOM into an iframe.</h2>
-
-		<live-code :template="code2" mode="vue>iframe"></live-code>
 	</div>
 </template>
 
@@ -81,7 +69,7 @@
 				document.head.innerHTML = \`
 					<style>
 						body {
-							background: skyblue;
+							background: pink;
 							width: 100%;
 							height: 100%;
 						}
@@ -96,63 +84,6 @@
 						'<br />inside iframe: ' + count++
 					)
 				}, 1000)
-			`).trim(),
-
-			code: stripIndent(`
-				<template>
-					<h1>Count: {{count}}</h1>
-				</template>
-
-				<style>
-					h1 {
-						background: deeppink;
-					}
-				</style>
-
-				<script>
-					export default {
-						data: () => ({
-							count: 0,
-						}),
-						mounted() {
-							setInterval(() => {
-								this.count++
-							}, 200);
-						},
-					}
-				<\/script>
-			`).trim(),
-
-			code2: stripIndent(`
-				<template>
-					<h1>Count: {{count}}</h1>
-				</template>
-
-				<style>
-					/* style the body inside the iframe */
-					body {
-						margin: 0;
-						padding: 0;
-						width: 100%;
-						height: 100%;
-					}
-					h1 {
-						background: deeppink;
-					}
-				</style>
-
-				<script>
-					export default {
-						data: () => ({
-							count: 0,
-						}),
-						mounted() {
-							setInterval(() => {
-								this.count++
-							}, 200);
-						},
-					}
-				<\/script>
 			`).trim(),
 		}),
 	}

@@ -11,13 +11,13 @@
 					<div class="live-code-reset"><button @click="reset">Reset</button></div>
 				</div>
 
-				<editor
+				<code-editor
 					ref="editor"
 					:options="options"
 					:mode="mode"
 					@change="__handleChange"
 					:value="editorValue"
-				></editor>
+				></code-editor>
 			</div>
 		</label>
 
@@ -33,7 +33,7 @@
 					<pre>{{ error }}</pre>
 				</div>
 
-				<preview
+				<output-view
 					v-if="!error"
 					:key="forceRender"
 					:value="exports"
@@ -41,7 +41,7 @@
 					:keep-data="keepData"
 					:mode="mode"
 					@error="__handleError"
-				></preview>
+				></output-view>
 			</div>
 		</label>
 	</form>
@@ -206,18 +206,16 @@
 <script>
 	import debounce from 'lodash/debounce'
 	import unescape from 'lodash/unescape'
-	import Editor from './Editor'
-	import Preview from './Preview'
-	import parseVueSFC from './utils/parser'
-	import compiler from './utils/compiler'
+	import CodeEditor from './CodeEditor'
+	import OutputView from './OutputView'
 	import evalJSWithScope from './utils/transform'
 
 	let ID = 0
 
 	export default {
 		components: {
-			Preview,
-			Editor,
+			OutputView,
+			CodeEditor,
 		},
 
 		props: {
@@ -230,13 +228,11 @@
 
 			/**
 			 * Specify the editor mode:
-			 * - vue - Export a Vue component which gets rendered in the preview area.
-			 * - vue>iframe - Same a "Vue", but rendered into an iframe
 			 * - script
 			 * - script>iframe
 			 * - html>iframe
 			 */
-			mode: {type: String, default: 'vue'},
+			mode: {type: String, default: 'html>iframe'},
 
 			// if autorun is true, then autorun is debounced by this amount after user
 			// types into the code editor.
@@ -360,8 +356,7 @@
 					return
 				}
 
-				this.error =
-					err && err.message ? (err.stack ? `ERROR: ${err.message}\n\n${err.stack}` : err.message) : err
+				this.error = err && err.message ? (err.stack ? `ERROR: ${err.message}\n\n${err.stack}` : err.message) : err
 
 				setTimeout(() => {
 					// Throw it in a separate task so that it won't interrupt
@@ -382,53 +377,9 @@
 				this.styles = ''
 
 				switch (this.mode) {
-					case 'vue':
-					case 'vue>iframe': {
-						const parsed = parseVueSFC(this.editorValue)
-
-						if (parsed.error) {
-							this.error = parsed.error.stack
-							console.error(parsed.error) // eslint-disable-line
-							return
-						}
-
-						if (!parsed.script && !parsed.template) {
-							this.error = 'no data'
-							console.error('no data') // eslint-disable-line
-						}
-
-						const compiled = compiler(parsed.script)
-
-						if (compiled.error) {
-							this.error = compiled.error.stack
-							console.error(compiled.error) // eslint-disable-line
-							return
-						}
-
-						let exports
-
-						try {
-							exports = evalJSWithScope(compiled.script, this.scope)
-						} catch (e) {
-							this.error = e.stack
-							console.error(e) // eslint-disable-line
-							return
-						}
-
-						if (parsed.template) {
-							exports.template = parsed.template
-						}
-
-						this.exports = exports
-
-						if (parsed.styles) this.styles = parsed.styles.join(' ')
-
-						break
-					}
-
 					case 'script': {
 						try {
-							evalJSWithScope(this.editorValue, this.scope, false)
+							evalJSWithScope(this.editorValue, this.scope)
 							break
 						} catch (e) {
 							this.error = e.stack

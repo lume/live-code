@@ -3,53 +3,36 @@
 	"version": "0.3.5",
 	"main": "./dist/live-code.umd.js",
 	"scripts": {
-		"start": "npm run examples",
-		"dev": "npm start",
-		"examples": "npm run with-node-opts -- 'vue-cli-service serve'",
-		"build:example": "npm run with-node-opts -- 'vue-cli-service build'",
-		"lint": "npm run with-node-opts -- 'vue-cli-service lint'",
-		"build": "npm run with-node-opts -- 'vue-cli-service build --target lib --name live-code ./src/index.js'",
+		"start": "npm run build && npm run examples",
+		"dev": "npm run build -- --watch",
+		"examples": "live-server .",
+		"lint": "vue-cli-service lint",
+		"build": "vue-cli-service build --target lib --name live-code ./src/index.js",
 		"test": "npm run lint && npm run build",
 		"prepare": "npm run build",
-		"clean": "rm -rf dist",
-		"is-legacy": "bash -c '(( `node -v | cut -dv -f2 | cut -d. -f1` < 17 ))'",
-		"with-node-opts": "if npm run is-legacy; then echo; else export NODE_OPTIONS=--openssl-legacy-provider; fi; bash -c",
+		"clean": "rimraf dist",
 		"release:patch": "npm test && npm version patch --message 'v%s' && npm publish && git push --follow-tags",
 		"release:minor": "npm test && npm version minor --message 'v%s' && npm publish && git push --follow-tags",
 		"release:major": "npm test && npm version major --message 'v%s' && npm publish && git push --follow-tags"
 	},
 	"dependencies": {
-		"core-js": "^2.6.5",
+		"core-js": "^3.32.1",
 		"lodash": "^4.17.15",
-		"vue": "2.6.12",
+		"vue": "2.7.14",
 		"vue-prism-editor": "^0.3.0"
 	},
 	"devDependencies": {
-		"@vue/cli-plugin-babel": "3.10.0",
-		"@vue/cli-plugin-eslint": "3.10.0",
-		"@vue/cli-service": "3.10.0",
-		"babel-eslint": "10.0.1",
-		"babel-standalone": "6.26.0",
-		"eslint": "5.16.0",
-		"eslint-plugin-vue": "5.0.0",
+		"@babel/eslint-parser": "7.22.11",
+		"@vue/cli-plugin-babel": "5.0.8",
+		"@vue/cli-plugin-eslint": "5.0.8",
+		"@vue/cli-service": "5.0.8",
+		"eslint": "8.48.0",
+		"eslint-plugin-vue": "9.17.0",
+		"live-server": "^1.2.2",
 		"prismjs": "1.17.1",
+		"rimraf": "^5.0.1",
 		"strip-indent": "3.0.0",
-		"vue-template-compiler": "2.6.12"
-	},
-	"overrides": {
-		"@vue/cli-overlay": "3.10.0",
-		"@vue/cli-shared-utils": "3.10.0",
-		"@vue/component-compiler-utils": "2.6.0",
-		"@vue/preload-webpack-plugin": "1.1.0",
-		"@vue/web-component-wrapper": "1.2.0",
-
-		"cache-loader": "2.0.1",
-		"css-loader": "1.0.1",
-		"file-loader": "3.0.1",
-		"postcss-loader": "3.0.0",
-		"thread-loader": "2.1.2",
-		"url-loader": "1.1.2",
-		"vue-loader": "15.7.0"
+		"vue-template-compiler": "2.7.14"
 	},
 	"eslintConfig": {
 		"root": true,
@@ -62,7 +45,7 @@
 		],
 		"rules": {},
 		"parserOptions": {
-			"parser": "babel-eslint"
+			"parser": "@babel/eslint-parser"
 		}
 	},
 	"postcss": {

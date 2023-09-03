@@ -4,25 +4,50 @@
 		<title>live-code</title>
 
 		<meta charset="utf-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width,initial-scale=1.0" />
 
-		<link rel="icon" href="<%= BASE_URL %>favicon.ico" />
-		<link rel="stylesheet" href="/node_modules/prismjs/plugins/line-numbers/prism-line-numbers.css" />
-		<link rel="stylesheet" href="/node_modules/prismjs/themes/prism.css" />
+		<link rel="icon" href="./favicon.ico" />
+		<link rel="stylesheet" href="../node_modules/prismjs/plugins/line-numbers/prism-line-numbers.css" />
+		<link rel="stylesheet" href="../node_modules/prismjs/themes/prism.css" />
+		<link rel="stylesheet" href="../dist/live-code.css" />
 
-		<script src="/node_modules/babel-standalone/babel.min.js"></script>
-		<script src="/node_modules/prismjs/prism.js"></script>
-		<!-- <script src="/node_modules/prismjs/plugins/line-numbers/prism-line-numbers.js"></script> -->
+		<script src="../node_modules/prismjs/prism.js"></script>
+		<!-- <script src="../node_modules/prismjs/plugins/line-numbers/prism-line-numbers.js"></script> -->
 	</head>
 	<body>
-		<noscript>
-			<strong
-				>We're sorry but live-code doesn't work without JavaScript enabled. Please enable it to
-				continue.</strong
-			>
-		</noscript>
 		<div id="app"></div>
-		<!-- built files will be auto injected -->
+
+		<script>
+			// Polyfill for Vue using Node.js process API. Tisk tisk tisk!
+			var process = {
+				env: {
+					NODE_ENV: 'development',
+				},
+			}
+		</script>
+
+		<script type="importmap">
+			{
+				"imports": {
+					"vue": "../node_modules/vue/dist/vue.esm.js",
+					"@lume/live-code": "./export-live-code.js"
+				}
+			}
+		</script>
+
+		<script type="module">
+			// Needed by vue-prism-editor, `Vue` is not global by default anymore and it will error.
+			import './global-vue.js'
+
+			// Load live-code (with vue-prism-editor) *after* we make Vue global.
+			const script = document.createElement('script')
+			script.src = '../dist/live-code.umd.js'
+			const promise = new Promise(resolve => (script.onload = resolve))
+			document.body.append(script)
+			await promise
+
+			// Finally import the example main code
+			import('./main.js')
+		</script>
 	</body>
 </html>
