@@ -9,7 +9,6 @@
 		"lint": "vue-cli-service lint",
 		"build": "vue-cli-service build --target lib --name live-code ./src/index.js",
 		"test": "npm run lint && npm run build",
-		"prepare": "npm run build",
 		"clean": "rimraf dist",
 		"release:patch": "npm test && npm version patch --message 'v%s' && npm publish && git push --follow-tags",
 		"release:minor": "npm test && npm version minor --message 'v%s' && npm publish && git push --follow-tags",
