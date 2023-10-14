@@ -28,7 +28,7 @@
 		"eslint": "8.48.0",
 		"eslint-plugin-vue": "9.17.0",
 		"five-server": "^0.3.1",
-		"prismjs": "1.17.1",
+		"prismjs": "1.27.0",
 		"rimraf": "^5.0.1",
 		"strip-indent": "3.0.0",
 		"vue-template-compiler": "2.7.14"
