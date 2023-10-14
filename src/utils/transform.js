@@ -4,7 +4,7 @@
 export default function evalJSWithScope(script, scope = {}) {
 	let scopeDecl = ''
 	for (let variable in scope) {
-			// eslint-disable-next-line no-prototype-builtins
+		// eslint-disable-next-line no-prototype-builtins
 		if (scope.hasOwnProperty(variable)) {
 			scopeDecl += 'var ' + variable + " = __scope__['" + variable + "'];"
 		}
