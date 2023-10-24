@@ -12,9 +12,10 @@
 		"clean": "rimraf dist",
 		"prettier": "prettier . --write",
 		"prettier:check": "prettier . --check",
-		"release:patch": "npm test && npm version patch --message 'v%s' && npm publish && git push --follow-tags",
-		"release:minor": "npm test && npm version minor --message 'v%s' && npm publish && git push --follow-tags",
-		"release:major": "npm test && npm version major --message 'v%s' && npm publish && git push --follow-tags"
+		"version": "npm test",
+		"release:patch": "npm version --no-workspaces patch --message 'v%s' && npm publish && git push --follow-tags",
+		"release:minor": "npm version --no-workspaces minor --message 'v%s' && npm publish && git push --follow-tags",
+		"release:major": "npm version --no-workspaces major --message 'v%s' && npm publish && git push --follow-tags"
 	},
 	"dependencies": {
 		"core-js": "^3.32.1",
