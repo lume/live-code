@@ -1,6 +1,6 @@
 {
 	"name": "@lume/live-code",
-	"version": "0.4.1",
+	"version": "0.4.2",
 	"main": "./dist/live-code.umd.js",
 	"scripts": {
 		"start": "npm run build && npm run examples",
