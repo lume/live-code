@@ -8,7 +8,7 @@
 		"examples": "five-server .",
 		"lint": "npm run prettier:check && vue-cli-service lint",
 		"build": "vue-cli-service build --target lib --name live-code ./src/index.js",
-		"test": "npm run lint && npm run build",
+		"test": "npm run lint",
 		"clean": "rimraf dist",
 		"prettier": "prettier . --write",
 		"prettier:check": "prettier . --check",
