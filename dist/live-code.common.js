@@ -11518,7 +11518,7 @@ var es_object_keys = __webpack_require__(9358);
 ;// CONCATENATED MODULE: external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
 var external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject = require("vue");
 var external_commonjs_vue_commonjs2_vue_root_Vue_default = /*#__PURE__*/__webpack_require__.n(external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject);
-;// CONCATENATED MODULE: ./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/LiveCode.vue?vue&type=template&id=a2d7e246
+;// CONCATENATED MODULE: ./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/LiveCode.vue?vue&type=template&id=265364be
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
@@ -12415,7 +12415,7 @@ var ID = 0;
       // force Vue to re-make the preview, in case no values for preview have changed
       this.forceRender++;
     },
-    reset: function reset() {
+    reset: function reset(event) {
       // prevent form submission.
       event.preventDefault();
       this.__handleChange(this.initialValue);
@@ -12480,10 +12480,10 @@ var ID = 0;
 });
 ;// CONCATENATED MODULE: ./src/LiveCode.vue?vue&type=script&lang=js
  /* harmony default export */ var src_LiveCodevue_type_script_lang_js = (LiveCodevue_type_script_lang_js); 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/LiveCode.vue?vue&type=style&index=0&id=a2d7e246&prod&lang=css
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/LiveCode.vue?vue&type=style&index=0&id=265364be&prod&lang=css
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/LiveCode.vue?vue&type=style&index=0&id=a2d7e246&prod&lang=css
+;// CONCATENATED MODULE: ./src/LiveCode.vue?vue&type=style&index=0&id=265364be&prod&lang=css
 
 ;// CONCATENATED MODULE: ./src/LiveCode.vue
 

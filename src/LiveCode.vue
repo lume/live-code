@@ -330,7 +330,7 @@
 				this.forceRender++
 			},
 
-			reset() {
+			reset(event) {
 				// prevent form submission.
 				event.preventDefault()
 
