@@ -3,23 +3,23 @@ name: Build and Test
 on: [push]
 
 jobs:
-    build:
-        runs-on: ${{ matrix.operating-system }}
+  build:
+    runs-on: ${{ matrix.operating-system }}
 
-        strategy:
-            matrix:
-                # TODO windows-latest
-                operating-system: [ubuntu-latest, macos-latest]
+    strategy:
+      matrix:
+        # TODO windows-latest
+        operating-system: [ubuntu-latest, macos-latest]
 
-        steps:
-            - uses: actions/checkout@v1
-            - name: Use Node.js latest
-              uses: actions/setup-node@v3
-              with:
-                  node-version: latest
-            - name: npm install, build, and test
-              run: |
-                  npm i
-                  npm test
-              env:
-                  CI: true
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js latest
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
+      - name: npm install, build, and test
+        run: |
+          npm i
+          npm test
+        env:
+          CI: true

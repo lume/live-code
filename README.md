@@ -25,8 +25,8 @@ Specify content with the `content` property:
 ```html
 <live-code id="editor" mode="html>iframe" debounce="200" />
 <script>
-  const editor = document.querySelector('#editor')
-  editor.content = `
+	const editor = document.querySelector('#editor')
+	editor.content = `
     if (true)
       console.log('hello')
   `
@@ -39,7 +39,7 @@ React, Preact, Solid.js, etc):
 
 ```js
 function SomeComponent(props) {
-  return <live-code content={props.someCode} mode="html>iframe" />
+	return <live-code content={props.someCode} mode="html>iframe" />
 }
 ```
 
@@ -72,13 +72,13 @@ Lastly, use a `<template>` to specify text content. This can be nicer than the
 
 ```html
 <live-code mode="html>iframe" debounce="200">
-  <template>
-    <h1>Example</h1>
-    <script>
-      const h1 = document.querySelector('h1')
-      h1.style.color = 'royalblue'
-    </script>
-  </template>
+	<template>
+		<h1>Example</h1>
+		<script>
+			const h1 = document.querySelector('h1')
+			h1.style.color = 'royalblue'
+		</script>
+	</template>
 </live-code>
 ```
 
