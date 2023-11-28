@@ -4,12 +4,11 @@
 	"main": "./dist/live-code.umd.js",
 	"scripts": {
 		"start": "npm run build && npm run examples",
-		"dev": "npm run build -- --watch",
+		"dev": "lume dev",
+		"build": "lume build",
+		"clean": "lume clean",
 		"examples": "five-server .",
-		"lint": "npm run prettier:check && vue-cli-service lint",
-		"build": "vue-cli-service build --target lib --name live-code ./src/index.js",
-		"test": "npm run lint",
-		"clean": "rimraf dist",
+		"test": "npm run prettier:check",
 		"prettier": "prettier . --write",
 		"prettier:check": "prettier . --check",
 		"version": "npm test",
@@ -18,46 +17,25 @@
 		"release:major": "npm version --no-workspaces major --message 'v%s' && npm publish && git push --follow-tags"
 	},
 	"dependencies": {
-		"core-js": "^3.32.1",
-		"lodash": "^4.17.15",
-		"vue": "2.7.14",
-		"vue-prism-editor": "^0.3.0"
+		"@babel/runtime": "^7.0.0",
+		"@codemirror/lang-html": "^6.0.0",
+		"@codemirror/lang-javascript": "^6.0.0",
+		"@lume/element": "^0.11.0",
+		"@uiw/codemirror-theme-noctis-lilac": "^4.0.0",
+		"classy-solid": "^0.3.0",
+		"code-mirror-el": "^0.1.0",
+		"codemirror": "^6.0.0",
+		"lodash-es": "^4.17.0",
+		"solid-js": "^1.0.0",
+		"thememirror": "^2.0.0"
 	},
 	"devDependencies": {
-		"@babel/eslint-parser": "7.22.11",
-		"@vue/cli-plugin-babel": "5.0.8",
-		"@vue/cli-plugin-eslint": "5.0.8",
-		"@vue/cli-service": "5.0.8",
-		"eslint": "8.48.0",
-		"eslint-plugin-vue": "9.17.0",
+		"@lume/cli": "^0.11.0",
+		"@types/lodash-es": "^4.17.0",
 		"five-server": "^0.3.1",
+		"lowclass": "^7.0.0",
 		"prettier": "3.0.3",
-		"prismjs": "1.17.1",
 		"rimraf": "^5.0.1",
-		"strip-indent": "3.0.0",
-		"vue-template-compiler": "2.7.14"
-	},
-	"eslintConfig": {
-		"root": true,
-		"env": {
-			"node": true
-		},
-		"extends": [
-			"plugin:vue/essential",
-			"eslint:recommended"
-		],
-		"rules": {},
-		"parserOptions": {
-			"parser": "@babel/eslint-parser"
-		}
-	},
-	"postcss": {
-		"plugins": {
-			"autoprefixer": {}
-		}
-	},
-	"browserslist": [
-		"> 1%",
-		"last 2 versions"
-	]
+		"typescript": "^5.0.0"
+	}
 }
