@@ -45,6 +45,7 @@ import debounce from 'lodash-es/debounce.js';
 import unescape from 'lodash-es/unescape.js';
 import { CodeMirrorContentchangedEvent } from 'code-mirror-el';
 import {} from './OutputView.js';
+import { stripIndent } from './stripIndent.js';
 export class LiveCodeContentchangedEvent extends CodeMirrorContentchangedEvent {
     constructor(view) {
         super(view);
@@ -256,7 +257,6 @@ let LiveCode = (() => {
                     return;
                 let content = this.content;
                 const isSelector = /^[.#]/.test(this.content);
-                console.log('is selector:', isSelector);
                 // If code starts with . or #
                 if (isSelector) {
                     // consider it a selector from which to get the code from.
@@ -265,8 +265,7 @@ let LiveCode = (() => {
                         throw Error(`${this.content} is not found`);
                     content = unescape(html.innerHTML);
                 }
-                this.#_.initialValue = content;
-                this.#_.editorValue = content;
+                this.#applyCode(content);
             });
             this.createEffect(() => {
                 if (!this.src && !this.content)
@@ -283,12 +282,15 @@ let LiveCode = (() => {
                 // have started fresh or reset (most likely the user did not restore
                 // the original code manually, but that could be possible too), so
                 // start the example right away.
-                if (this.#_.editorValue === this.#_.initialValue)
+                if (this.#_.editorValue === this.#_.initialValue) {
+                    this.#executeCodeDebounced.cancel();
                     this.#executeCodeQuick();
+                }
                 // Otherwise we debounce while modifying code (it does not match
                 // with initialValue).
-                else
+                else {
                     this.#executeCodeDebounced();
+                }
             });
             this.#resizeObserver.observe(this.#form);
         }
@@ -389,8 +391,14 @@ let LiveCode = (() => {
         #applyCode(code) {
             const host = window.location.origin;
             code = code.replaceAll('${host}', host).replaceAll('href="/"', `href="${host}"`);
-            const leadingEmptyLines = /^\s*[\r\n]+/;
-            code = code.replace(leadingEmptyLines, '');
+            // FIXME we rely on this so that live preview will not run twice
+            // initially. Instead, we need to update <code-mirror> so that it does
+            // not emit a contentchanged event when the value is being set, only
+            // when being modified by something else (like the user typing)
+            if (this.stripIndent)
+                code = stripIndent(code);
+            if (this.trim)
+                code = code.trim();
             if (this.src) {
                 const dirUrl = new URL(this.src, window.location.href).href;
                 code = `<base href="${dirUrl}" />\n` + code;

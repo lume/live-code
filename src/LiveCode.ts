@@ -15,6 +15,7 @@ import unescape from 'lodash-es/unescape.js'
 import {CodeMirrorContentchangedEvent, type CodeMirror} from 'code-mirror-el'
 import {type OutputViewErrorEvent} from './OutputView.js'
 import type {EditorView} from 'codemirror'
+import {stripIndent} from './stripIndent.js'
 
 export class LiveCodeContentchangedEvent extends CodeMirrorContentchangedEvent {
 	constructor(view: EditorView) {
@@ -137,8 +138,6 @@ class LiveCode extends Effectful(Element) {
 
 			const isSelector = /^[.#]/.test(this.content)
 
-			console.log('is selector:', isSelector)
-
 			// If code starts with . or #
 			if (isSelector) {
 				// consider it a selector from which to get the code from.
@@ -148,8 +147,7 @@ class LiveCode extends Effectful(Element) {
 				content = unescape(html.innerHTML)
 			}
 
-			this.#_.initialValue = content
-			this.#_.editorValue = content
+			this.#applyCode(content)
 		})
 
 		this.createEffect(() => {
@@ -167,10 +165,15 @@ class LiveCode extends Effectful(Element) {
 			// have started fresh or reset (most likely the user did not restore
 			// the original code manually, but that could be possible too), so
 			// start the example right away.
-			if (this.#_.editorValue === this.#_.initialValue) this.#executeCodeQuick()
+			if (this.#_.editorValue === this.#_.initialValue) {
+				this.#executeCodeDebounced.cancel()
+				this.#executeCodeQuick()
+			}
 			// Otherwise we debounce while modifying code (it does not match
 			// with initialValue).
-			else this.#executeCodeDebounced()
+			else {
+				this.#executeCodeDebounced()
+			}
 		})
 
 		this.#resizeObserver.observe(this.#form)
@@ -286,8 +289,13 @@ class LiveCode extends Effectful(Element) {
 	#applyCode(code: string) {
 		const host = window.location.origin
 		code = code.replaceAll('${host}', host).replaceAll('href="/"', `href="${host}"`)
-		const leadingEmptyLines = /^\s*[\r\n]+/
-		code = code.replace(leadingEmptyLines, '')
+
+		// FIXME we rely on this so that live preview will not run twice
+		// initially. Instead, we need to update <code-mirror> so that it does
+		// not emit a contentchanged event when the value is being set, only
+		// when being modified by something else (like the user typing)
+		if (this.stripIndent) code = stripIndent(code)
+		if (this.trim) code = code.trim()
 
 		if (this.src) {
 			const dirUrl = new URL(this.src, window.location.href).href
