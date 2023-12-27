@@ -6,10 +6,15 @@ export declare class LiveCodeContentchangedEvent extends CodeMirrorContentchange
 }
 type LiveCodeAttributes = 'content' | 'src' | 'stripIndent' | 'trim' | 'autorun' | 'mode' | 'debounce';
 declare const LiveCode_base: (new (...a: any[]) => {
-    "__#1@#owner": import("solid-js").Owner | null;
-    "__#1@#dispose": (() => void) | null;
+    "__#1@#effects": Set<import("classy-solid").Effect>;
     createEffect(fn: () => void): void;
     stopEffects(): void;
+    "__#1@#createEffect1"(fn: () => void): void;
+    "__#1@#stopEffects1"(): void;
+    "__#1@#owner": import("solid-js").Owner | null;
+    "__#1@#dispose": (() => void) | null;
+    "__#1@#createEffect2"(fn: () => void): void;
+    "__#1@#stopEffects2"(): void;
 }) & typeof Element;
 export declare class LiveCode extends LiveCode_base {
     #private;

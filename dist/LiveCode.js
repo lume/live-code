@@ -416,8 +416,8 @@ let LiveCode = (() => {
 			ref=${(e) => (this.#form = e)}
 			class=${() => 'live-code' + (this.#_.smaller ? ' live-code-smaller' : '')}
 		>
-			<input class="live-code-tab-input" type="radio" name="tab" id=${'live-code-tab-1-' + this.#id} checked />
-			<input class="live-code-tab-input" type="radio" name="tab" id=${'live-code-tab-2-' + this.#id} />
+			<input class="live-code-tab-input" type="radio" name="tab" id=${'live-code-tab-1-' + this.#id} />
+			<input class="live-code-tab-input" type="radio" name="tab" id=${'live-code-tab-2-' + this.#id} checked />
 
 			<label class="live-code-tab-label" for=${'live-code-tab-1-' + this.#id}>
 				<span>CODE</span>
