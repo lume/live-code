@@ -5,6 +5,7 @@
 	"type": "module",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
+	"homepage": "http://github.com/lume/element#readme",
 	"scripts": {
 		"start": "npm run build && npm run examples",
 		"dev": "lume dev",
@@ -40,5 +41,22 @@
 		"prettier": "3.0.3",
 		"rimraf": "^5.0.1",
 		"typescript": "^5.0.0"
-	}
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/lume/element.git"
+	},
+	"bugs": {
+		"url": "https://github.com/lume/element/issues"
+	},
+	"keywords": [
+		"custom-elements",
+		"web-components",
+		"html",
+		"ui",
+		"ui-components",
+		"code-editor",
+		"live-code",
+		"lume"
+	]
 }
