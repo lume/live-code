@@ -264,7 +264,7 @@ let LiveCode = (() => {
         }
         connectedCallback() {
             super.connectedCallback();
-            // This is a fallback for browsers that don't have Full Screen API,
+            // This is a fallback for browsers that don't have Fullscreen API,
             // but have <dialog> support (namely iOS Safari).
             if (!this.#fullviewModalHost.shadowRoot) {
                 const root = this.#fullviewModalHost.attachShadow({ mode: 'open' });
@@ -571,6 +571,8 @@ let LiveCode = (() => {
 			text-align: center;
 			vertical-align: middle;
 			line-height: 40px;
+			font-size: 1.5em;
+			background: rgb(0 0 0 / 0.02)
 		}
 
 		.live-code-smaller .live-code-tab-input:nth-child(1):checked ~ label:nth-child(3),
@@ -620,15 +622,31 @@ let LiveCode = (() => {
 			height: 40px;
 			display: flex;
 			gap: 5px;
+			padding: 4px 6px;
 			justify-content: flex-end;
 			align-items: center;
 		}
 
+		.live-code-smaller .live-code-buttons {
+			padding: 6px 9px;
+		}
+
 		.live-code-buttons button {
 			display: block;
-			border-radius: 0;
+			border-radius: 3px;
 			border: none;
-			border-top: 2px solid var(--tab-color);
+			background: rgb(0 0 0 / 0.08);
+			padding: 5px 10px;
+			color: black;
+			font-size: 1em;
+			cursor: pointer;
+			-webkit-user-select: none;
+			user-select: none;
+		}
+
+		.live-code-smaller .live-code-buttons button {
+			padding: 5px 10px;
+			font-size: 1.2em;
 		}
 
 		/* }}} */
@@ -685,6 +703,7 @@ let LiveCode = (() => {
 		/* small mode */
 		:host([editor-hidden]) .live-code-preview-area {display: flex !important; top: 0}
 		:host([editor-hidden]) .live-code-tab-label > span {display: none}
+		:host([editor-hidden]) .live-code-tab-label {background: none !important} /*ugh*/
 
 		/* Scrollbars */
 
