@@ -17,14 +17,29 @@ npm install && npm start
 Specify content with the `content` attribute:
 
 ```html
-<live-code content="console.log('hello')" mode="html>iframe" debounce="200" />
+<live-code content="console.log('hello')" mode="script>iframe" />
+
+<script type="importmap">
+	... setup the import map, f.e. see examples/index.html, or use an tool to generate an import map such as JSPM Importmap Generator.  ...
+</script>
+
+<script type="module">
+	import '@lume/live-code' // defines the element
+</script>
 ```
 
 Specify content with the `content` property:
 
 ```html
-<live-code id="editor" mode="html>iframe" debounce="200" />
+<live-code id="editor" mode="script>iframe" />
+
+<script type="importmap">
+	...
+</script>
+
 <script>
+	import '@lume/live-code' // defines the element
+
 	const editor = document.querySelector('#editor')
 	editor.content = `
     if (true)
@@ -33,13 +48,16 @@ Specify content with the `content` property:
 </script>
 ```
 
-The `content` attribute or JS property is more useful for short pieces of text, or
-for programmatically setting from a string. Here's a JSX example (useful in
-React, Preact, Solid.js, etc):
+The `content` attribute or JS property is more useful for short pieces of text,
+or for programmatically setting from a string, and with template systems that
+set attributes from JS variables.
+
+Here's a JSX example (useful in React, Preact, Solid.js, etc):
 
 ```js
 function SomeComponent(props) {
-	return <live-code content={props.someCode} mode="html>iframe" />
+	// Set the content from a variable.
+	return <live-code content={props.someCode} />
 }
 ```
 
@@ -47,7 +65,7 @@ Here's a Lit `html` example:
 
 ```js
 render() {
-  return html`<live-code content=${this.someCode} mode="html>iframe"></live-code>`
+  return html`<live-code content=${this.someCode}></live-code>`
 }
 ```
 
@@ -55,23 +73,23 @@ Here's a Solid.js `html` example in a Lume `Element`:
 
 ```js
 template() {
-  return html`<live-code content=${() => this.someCode} mode="html>iframe"></live-code>`
+  return html`<live-code content=${() => this.someCode}></live-code>`
 }
 ```
 
 Etc. `<live-code>` can be used in Vue, Svelte, Angular, and all the rest.
 
-Specify a file with the `src` attribute or JS property to have text content fetched from a file.
+Specify a file with the `src` attribute or JS property, and text content will be fetched from that file:
 
 ```html
-<live-code src="./path/to/file.js" mode="script>iframe" debounce="200" />
+<live-code src="./path/to/file.js" mode="script>iframe" />
 ```
 
-Lastly, use a `<template>` to specify text content. This can be nicer than the
-`content` attribute when the text is multiline:
+Lastly, use a `<template>` to specify text content inline. This can be cleaner
+than placing multiline text inside the `content` attribute by hand:
 
 ```html
-<live-code mode="html>iframe" debounce="200">
+<live-code>
 	<template>
 		<h1>Example</h1>
 		<script>
@@ -98,20 +116,28 @@ Each attribute has a respective JS property of the same name.
   `.` or `#`. The given text string, or the text content of the selected element,
   will appear in the editor. Any time the user resets the editor with the Reset
   button or `reset()` method, the text in the editor will reset to the initial
-  value specified by this.
+  value specified by this. Default: `""` which is ignored.
 - `src` - Specify a file from which to get text content from. If `content` is
   also specified, content loaded from `src` will have priority and `content` will
-  be overridden.
+  be overridden. Default: `""` which is ignored.
 - `autorun` - A boolean. If true, editing the text will cause the preview area
   to automatically re-run based on the new content. The `Rerun` button will always force a
-  rerun.
-- `debounce` - A number. If `autorun` is `true`, then the automatic re-run will
-  happen only after a delay (as specified by this prop) after the user has stopped
-  inputting text.
-- `mode` - The mode specified which type of content the editor will execute.
+  rerun. Default: `true`.
+- `stripIndent` - A boolean. If true, the given code will be unindented, which
+  is useful for template strings that are indented within the source where they
+  are defined. Default: `true`.
+- `trim` - A boolean. If true, leading and trailing white space will be removed.
+  Default: `true`.
+- `debounce` - A number. If `autorun` is true, then autorun is debounced by
+  this amount in milliseconds after a user types into the code editor. Defaults:
+  `1000`.
+- `mode` - The mode specifies which type of content the editor will execute.
   Possible values are the following strings:
+
   - `"html>iframe"` - The content will be treated as HTML and placed in an iframe.
   - `"script>iframe"` - The content is executed as a `<script>` inside an iframe.
+
+  Default: `"html>iframe"`
 
 ## Methods
 

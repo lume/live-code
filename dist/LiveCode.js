@@ -247,8 +247,65 @@ let LiveCode = (() => {
             }
         });
         #form;
+        #fullviewModalHost;
+        #dialog;
+        #toggleFullviewDialog() {
+            if (this.#dialog.open) {
+                document.body.removeAttribute('inert');
+                this.#form.slot = '';
+                this.#dialog.close();
+            }
+            else {
+                if (!document.body.hasAttribute('inert'))
+                    document.body.toggleAttribute('inert');
+                this.#form.slot = 'fullscreen';
+                this.#dialog.showModal();
+            }
+        }
         connectedCallback() {
             super.connectedCallback();
+            // This is a fallback for browsers that don't have Full Screen API,
+            // but have <dialog> support (namely iOS Safari).
+            if (!this.#fullviewModalHost.shadowRoot) {
+                const root = this.#fullviewModalHost.attachShadow({ mode: 'open' });
+                root.append(...html `
+					<dialog ref=${(e) => (this.#dialog = e)}>
+						<slot name="fullscreen"></slot>
+					</dialog>
+
+					<slot></slot>
+
+					<style>
+						dialog {
+							width: 100%;
+							height: 100%;
+							padding: 0;
+							margin: 0;
+							max-width: unset;
+							max-height: unset;
+							border: none;
+						}
+
+						/*
+						 * Make the backdrop bigger so that when iOS viewport
+						 * resizes (when Safari UI auto-hides) we avoid
+						 * revealing content underneath the modal.
+					  	 */
+						::backdrop {
+							width: 150%;
+							height: 150%;
+							top: 50%;
+							left: 50%;
+							transform: translate(-50%, -50%);
+							background: white;
+						}
+					</style>
+				`);
+                this.#dialog.addEventListener('touchmove', event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                });
+            }
             this.createEffect(() => {
                 this.#executeCodeDebounced = debounce(this.#executeCode, this.debounce);
             });
@@ -334,7 +391,7 @@ let LiveCode = (() => {
             if (document.fullscreenElement)
                 document.exitFullscreen();
             else
-                this.#form.requestFullscreen();
+                this.#form.requestFullscreen?.() ?? this.#form.webkitRequestFullscreen?.() ?? this.#toggleFullviewDialog();
         };
         #handleResize(width) {
             if (width < 800)
@@ -412,79 +469,85 @@ let LiveCode = (() => {
             return this.mode.startsWith('html') ? 'html' : 'js';
         }
         template = () => html `
-		<form
-			ref=${(e) => (this.#form = e)}
-			class=${() => 'live-code' + (this.#_.smaller ? ' live-code-smaller' : '')}
-		>
-			<input class="live-code-tab-input" type="radio" name="tab" id=${'live-code-tab-1-' + this.#id} />
-			<input class="live-code-tab-input" type="radio" name="tab" id=${'live-code-tab-2-' + this.#id} checked />
+		<div ref=${(e) => (this.#fullviewModalHost = e)} style="display: contents">
+			<form
+				ref=${(e) => (this.#form = e)}
+				class=${() => 'live-code' + (this.#_.smaller ? ' live-code-smaller' : '')}
+			>
+				<input class="live-code-tab-input" type="radio" name="tab" id=${'live-code-tab-1-' + this.#id} />
+				<input class="live-code-tab-input" type="radio" name="tab" id=${'live-code-tab-2-' + this.#id} checked />
 
-			<label class="live-code-tab-label" for=${'live-code-tab-1-' + this.#id}>
-				<span>CODE</span>
+				<label class="live-code-tab-label" for=${'live-code-tab-1-' + this.#id}>
+					<span>CODE</span>
 
-				<div class="live-code-edit-area live-code-tab-content">
-					<div class="live-code-buttons">
-						<div class="live-code-reset"><button onclick=${this.#onClickReset}>Reset</button></div>
-						<div class="live-code-copy"><button onclick=${this.#onClickCopy}>Copy</button></div>
-					</div>
+					<div class="live-code-edit-area live-code-tab-content">
+						<div class="live-code-buttons">
+							<div class="live-code-reset"><button onclick=${this.#onClickReset}>Reset</button></div>
+							<div class="live-code-copy"><button onclick=${this.#onClickCopy}>Copy</button></div>
+						</div>
 
-					<div class="live-code-editor">
-						<code-mirror
-							ref=${(e) => (this.#codemirror = e)}
-							basic-setup
-							content=${() => this.#_.initialValue}
-							language=${() => this.syntax}
-							strip-indent=${() => this.stripIndent}
-							trim=${() => this.trim}
-							on:contentchanged=${(event) => this.#handleChange(event)}
-							stylesheet=${
+						<div class="live-code-editor">
+							<code-mirror
+								ref=${(e) => (this.#codemirror = e)}
+								basic-setup
+								content=${() => this.#_.initialValue}
+								language=${() => this.syntax}
+								strip-indent=${() => this.stripIndent}
+								trim=${() => this.trim}
+								on:contentchanged=${(event) => this.#handleChange(event)}
+								stylesheet=${
         /*css*/ `
-									.cm-focused {
-										outline: none !important;
-									}
+										.cm-focused {
+											outline: none !important;
+										}
 
-									.cm-activeLine {
-										/* The color from noctisLilac with an additional 0.4 opacity value */
-										background-color: rgba(225, 222, 243, 0.4) !important;
-									}
-								`}
-							xtheme=${smoothy}
-							extensions=${[]}
-						></code-mirror>
-					</div>
-				</div>
-			</label>
-
-			<label class="live-code-tab-label" for=${'live-code-tab-2-' + this.#id}>
-				<span>RESULT</span>
-
-				<div class="live-code-preview-area live-code-tab-content">
-					<div class="live-code-buttons">
-						<div class="live-code-rerun"><button onclick=${this.#onClickRerun}>Rerun</button></div>
-						<div class="live-code-fullscreen">
-							<button onclick=${this.#onClickToggleFullscreen}>Toggle Fullscreen</button>
+										.cm-activeLine {
+											/* The color from noctisLilac with an additional 0.4 opacity value */
+											background-color: rgba(225, 222, 243, 0.4) !important;
+										}
+									`}
+								xtheme=${smoothy}
+								extensions=${[]}
+							></code-mirror>
 						</div>
 					</div>
+				</label>
 
-					<div class=${() => 'live-code-error' + (!this.#_.error ? ' hidden' : '')}>
-						<pre>${() => this.#_.error}</pre>
+				<label class="live-code-tab-label" for=${'live-code-tab-2-' + this.#id}>
+					<span>RESULT</span>
+
+					<div class="live-code-preview-area live-code-tab-content">
+						<div class="live-code-buttons">
+							<div class="live-code-rerun"><button onclick=${this.#onClickRerun}>Rerun</button></div>
+							<div class="live-code-fullscreen">
+								<button onclick=${this.#onClickToggleFullscreen}>Toggle Fullscreen</button>
+							</div>
+						</div>
+
+						<div class=${() => 'live-code-error' + (!this.#_.error ? ' hidden' : '')}>
+							<pre>${() => this.#_.error}</pre>
+						</div>
+
+						<output-view
+							class=${() => (this.#_.error ? ' hidden' : '')}
+							value=${() => this.#_.debouncedEditorValue}
+							mode=${() => this.mode}
+							on:error=${(e) => this.#handleError(e.error)}
+						></output-view>
 					</div>
-
-					<output-view
-						class=${() => (this.#_.error ? ' hidden' : '')}
-						value=${() => this.#_.debouncedEditorValue}
-						mode=${() => this.mode}
-						on:error=${(e) => this.#handleError(e.error)}
-					></output-view>
-				</div>
-			</label>
-		</form>
+				</label>
+			</form>
+		</div>
 	`;
         css = /*css*/ `
+		:host {
+			height: 420px;
+		}
+
 		.live-code {
 			font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
 			background: rgb(242, 241, 248); /* Background color from noctisLilac theme. */
-			height: 420px;
+			height: 100%;
 			width: 100%;
 			position: relative;
 			display: flex;
