@@ -5,7 +5,7 @@
 	"type": "module",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
-	"homepage": "http://github.com/lume/element#readme",
+	"homepage": "http://github.com/lume/live-code#readme",
 	"scripts": {
 		"start": "npm run build && npm run examples",
 		"dev": "lume dev",
@@ -44,10 +44,10 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+ssh://git@github.com/lume/element.git"
+		"url": "git+ssh://git@github.com/lume/live-code.git"
 	},
 	"bugs": {
-		"url": "https://github.com/lume/element/issues"
+		"url": "https://github.com/lume/live-code/issues"
 	},
 	"keywords": [
 		"custom-elements",
