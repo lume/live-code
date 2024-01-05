@@ -10,8 +10,6 @@ import {signal, reactive, Effectful} from 'classy-solid'
 import {batch, onCleanup} from 'solid-js'
 import html from 'solid-js/html'
 import {smoothy} from 'thememirror/dist/themes/smoothy.js' // Needs a fix for selection highlight. https://github.com/vadimdemedes/thememirror
-import debounce from 'lodash-es/debounce.js'
-import unescape from 'lodash-es/unescape.js'
 import {CodeMirrorContentchangedEvent, type CodeMirror} from 'code-mirror-el'
 import {type OutputViewErrorEvent} from './OutputView.js'
 import type {EditorView} from 'codemirror'
@@ -62,6 +60,19 @@ class LiveCode extends Effectful(Element) {
 	@booleanAttribute autorun = true
 
 	/**
+	 * Only useful when `autorun` is true. When `autorun` is true, then if this
+	 * is true, the preview will only autorun if it is visible on screen (f.e.
+	 * not scrolled outside of the view). If this is false, then the preview
+	 * will autorun regardless if it is visible or not. If there are a lot of
+	 * examples on the page, running them all even if they are not visible could
+	 * be costly, and you may want to run only the ones that are in view.
+	 *
+	 * When true, any live code previews that go off screen will be discarded,
+	 * and automatically re-ran when they come back into view.
+	 */
+	@booleanAttribute autorunInView = true
+
+	/**
 	 * Specify the editor mode:
 	 * - script
 	 * - script>iframe
@@ -77,6 +88,7 @@ class LiveCode extends Effectful(Element) {
 
 	/////////////////////////
 
+	// Private reactive state
 	#_ = new (
 		@reactive
 		class {
@@ -85,6 +97,7 @@ class LiveCode extends Effectful(Element) {
 			@signal editorValue = ''
 			@signal debouncedEditorValue = ''
 			@signal smaller = false
+			@signal canView: boolean | null = null
 		}
 	)()
 
@@ -194,48 +207,67 @@ class LiveCode extends Effectful(Element) {
 		})
 
 		this.createEffect(() => {
-			if (this.src) return
-
-			let content = this.content
-
-			const isSelector = /^[.#]/.test(this.content)
-
-			// If code starts with . or #
-			if (isSelector) {
-				// consider it a selector from which to get the code from.
-				const html = document.querySelector(this.content)
-				if (!html) throw Error(`${this.content} is not found`)
-
-				content = unescape(html.innerHTML)
-			}
-
-			this.#applyCode(content)
-		})
-
-		this.createEffect(() => {
-			if (!this.src && !this.content) this.#loadCodeFromTemplate()
-		})
-
-		this.createEffect(() => {
 			if (this.src) this.#loadCodeFromSrc()
+			else if (this.content) this.#loadCodeFromContent()
+			else this.#loadCodeFromTemplate()
 		})
 
 		this.createEffect(() => {
 			if (!this.autorun) return
 
-			// When initialValue is same as editorValue, it most likely means we
-			// have started fresh or reset (most likely the user did not restore
-			// the original code manually, but that could be possible too), so
-			// start the example right away.
-			if (this.#_.editorValue === this.#_.initialValue) {
-				this.#executeCodeDebounced.cancel()
-				this.#executeCodeQuick()
+			if (this.autorunInView) {
+				const debouncedSetCanView = debounce(() => (this.#_.canView = true), 500)
+
+				const observer = new IntersectionObserver(entries => {
+					debouncedSetCanView.cancel()
+
+					for (const entry of entries) {
+						// Has come into view.
+						if (entry.isIntersecting) {
+							// on first run, show immediately if in view
+							if (this.#_.canView === null) this.#_.canView = true
+							// otherwise debounce to avoid many editors causing a flood of network and CPU load when scrolling past them.
+							else debouncedSetCanView()
+						} else {
+							this.#_.canView = false
+						}
+					}
+				})
+
+				observer.observe(this)
+
+				onCleanup(() => {
+					debouncedSetCanView.cancel()
+					observer.disconnect()
+				})
+			} else {
+				this.#_.canView = true
 			}
-			// Otherwise we debounce while modifying code (it does not match
-			// with initialValue).
-			else {
-				this.#executeCodeDebounced()
-			}
+
+			this.createEffect(() => {
+				if (!this.#_.canView) return
+
+				this.createEffect(() => {
+					// When initialValue is same as editorValue, it most likely means we
+					// have started fresh or reset (most likely the user did not restore
+					// the original code manually, but that could be possible too), so
+					// start the example right away.
+					if (this.#_.editorValue === this.#_.initialValue) {
+						this.#executeCodeDebounced.cancel()
+						this.#executeCodeQuick()
+					}
+					// Otherwise we debounce while modifying code (it does not match
+					// with initialValue).
+					else {
+						this.#executeCodeDebounced()
+					}
+				})
+
+				onCleanup(() => {
+					// Empty string causes OutputView to be empty (f.e. removes the iframe)
+					this.#_.debouncedEditorValue = ''
+				})
+			})
 		})
 
 		this.#resizeObserver.observe(this.#form)
@@ -329,7 +361,7 @@ class LiveCode extends Effectful(Element) {
 		this.#_.debouncedEditorValue = this.#_.editorValue
 	}
 
-	#executeCodeQuick = debounce(this.#executeCode, 0)
+	#executeCodeQuick = debounce(() => this.#executeCode(), 0)
 
 	async #loadCodeFromSrc() {
 		let cleaned = false
@@ -339,6 +371,23 @@ class LiveCode extends Effectful(Element) {
 		const code = await response.text()
 		if (cleaned) return
 		this.#applyCode(code)
+	}
+
+	#loadCodeFromContent() {
+		let content = this.content
+
+		const isSelector = /^[.#]/.test(this.content)
+
+		// If code starts with . or #
+		if (isSelector) {
+			// consider it a selector from which to get the code from.
+			const html = document.querySelector(this.content)
+			if (!html) throw Error(`${this.content} is not found`)
+
+			content = unescape(html.innerHTML)
+		}
+
+		this.#applyCode(content)
 	}
 
 	#loadCodeFromTemplate() {
@@ -637,6 +686,16 @@ class LiveCode extends Effectful(Element) {
 			background-color: #777;
 		}
 	`
+}
+
+function debounce<Args extends any[]>(fn: (...args: Args) => void, time = 0) {
+	let timeout = 0
+	const debounced = function (this: any, ...args: Args) {
+		clearTimeout(timeout)
+		timeout = window.setTimeout(() => fn.apply(this, args), time)
+	}
+	debounced.cancel = () => clearTimeout(timeout)
+	return debounced
 }
 
 declare module 'solid-js' {

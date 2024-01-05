@@ -41,8 +41,6 @@ import { signal, reactive, Effectful } from 'classy-solid';
 import { batch, onCleanup } from 'solid-js';
 import html from 'solid-js/html';
 import { smoothy } from 'thememirror/dist/themes/smoothy.js'; // Needs a fix for selection highlight. https://github.com/vadimdemedes/thememirror
-import debounce from 'lodash-es/debounce.js';
-import unescape from 'lodash-es/unescape.js';
 import { CodeMirrorContentchangedEvent } from 'code-mirror-el';
 import {} from './OutputView.js';
 import { stripIndent } from './stripIndent.js';
@@ -69,6 +67,8 @@ let LiveCode = (() => {
     let _trim_initializers = [];
     let _autorun_decorators;
     let _autorun_initializers = [];
+    let _autorunInView_decorators;
+    let _autorunInView_initializers = [];
     let _mode_decorators;
     let _mode_initializers = [];
     let _debounce_decorators;
@@ -82,6 +82,7 @@ let LiveCode = (() => {
             _stripIndent_decorators = [booleanAttribute];
             _trim_decorators = [booleanAttribute];
             _autorun_decorators = [booleanAttribute];
+            _autorunInView_decorators = [booleanAttribute];
             _mode_decorators = [stringAttribute];
             _debounce_decorators = [numberAttribute];
             __esDecorate(null, null, _content_decorators, { kind: "field", name: "content", static: false, private: false, access: { has: obj => "content" in obj, get: obj => obj.content, set: (obj, value) => { obj.content = value; } }, metadata: _metadata }, _content_initializers, _instanceExtraInitializers);
@@ -89,6 +90,7 @@ let LiveCode = (() => {
             __esDecorate(null, null, _stripIndent_decorators, { kind: "field", name: "stripIndent", static: false, private: false, access: { has: obj => "stripIndent" in obj, get: obj => obj.stripIndent, set: (obj, value) => { obj.stripIndent = value; } }, metadata: _metadata }, _stripIndent_initializers, _instanceExtraInitializers);
             __esDecorate(null, null, _trim_decorators, { kind: "field", name: "trim", static: false, private: false, access: { has: obj => "trim" in obj, get: obj => obj.trim, set: (obj, value) => { obj.trim = value; } }, metadata: _metadata }, _trim_initializers, _instanceExtraInitializers);
             __esDecorate(null, null, _autorun_decorators, { kind: "field", name: "autorun", static: false, private: false, access: { has: obj => "autorun" in obj, get: obj => obj.autorun, set: (obj, value) => { obj.autorun = value; } }, metadata: _metadata }, _autorun_initializers, _instanceExtraInitializers);
+            __esDecorate(null, null, _autorunInView_decorators, { kind: "field", name: "autorunInView", static: false, private: false, access: { has: obj => "autorunInView" in obj, get: obj => obj.autorunInView, set: (obj, value) => { obj.autorunInView = value; } }, metadata: _metadata }, _autorunInView_initializers, _instanceExtraInitializers);
             __esDecorate(null, null, _mode_decorators, { kind: "field", name: "mode", static: false, private: false, access: { has: obj => "mode" in obj, get: obj => obj.mode, set: (obj, value) => { obj.mode = value; } }, metadata: _metadata }, _mode_initializers, _instanceExtraInitializers);
             __esDecorate(null, null, _debounce_decorators, { kind: "field", name: "debounce", static: false, private: false, access: { has: obj => "debounce" in obj, get: obj => obj.debounce, set: (obj, value) => { obj.debounce = value; } }, metadata: _metadata }, _debounce_initializers, _instanceExtraInitializers);
             __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
@@ -147,6 +149,30 @@ let LiveCode = (() => {
          */
         autorun = __runInitializers(this, _autorun_initializers, true
         /**
+         * Only useful when `autorun` is true. When `autorun` is true, then if this
+         * is true, the preview will only autorun if it is visible on screen (f.e.
+         * not scrolled outside of the view). If this is false, then the preview
+         * will autorun regardless if it is visible or not. If there are a lot of
+         * examples on the page, running them all even if they are not visible could
+         * be costly, and you may want to run only the ones that are in view.
+         *
+         * When true, any live code previews that go off screen will be discarded,
+         * and automatically re-ran when they come back into view.
+         */
+        );
+        /**
+         * Only useful when `autorun` is true. When `autorun` is true, then if this
+         * is true, the preview will only autorun if it is visible on screen (f.e.
+         * not scrolled outside of the view). If this is false, then the preview
+         * will autorun regardless if it is visible or not. If there are a lot of
+         * examples on the page, running them all even if they are not visible could
+         * be costly, and you may want to run only the ones that are in view.
+         *
+         * When true, any live code previews that go off screen will be discarded,
+         * and automatically re-ran when they come back into view.
+         */
+        autorunInView = __runInitializers(this, _autorunInView_initializers, true
+        /**
          * Specify the editor mode:
          * - script
          * - script>iframe
@@ -171,8 +197,10 @@ let LiveCode = (() => {
          */
         debounce = __runInitializers(this, _debounce_initializers, 1000
         /////////////////////////
+        // Private reactive state
         );
         /////////////////////////
+        // Private reactive state
         #_ = new ((() => {
             let _classDecorators = [reactive];
             let _classDescriptor;
@@ -189,6 +217,8 @@ let LiveCode = (() => {
             let _debouncedEditorValue_initializers = [];
             let _smaller_decorators;
             let _smaller_initializers = [];
+            let _canView_decorators;
+            let _canView_initializers = [];
             var class_1 = class {
                 static { _classThis = this; }
                 static { __setFunctionName(_classThis, ""); }
@@ -199,11 +229,13 @@ let LiveCode = (() => {
                     _editorValue_decorators = [signal];
                     _debouncedEditorValue_decorators = [signal];
                     _smaller_decorators = [signal];
+                    _canView_decorators = [signal];
                     __esDecorate(null, null, _error_decorators, { kind: "field", name: "error", static: false, private: false, access: { has: obj => "error" in obj, get: obj => obj.error, set: (obj, value) => { obj.error = value; } }, metadata: _metadata }, _error_initializers, _instanceExtraInitializers);
                     __esDecorate(null, null, _initialValue_decorators, { kind: "field", name: "initialValue", static: false, private: false, access: { has: obj => "initialValue" in obj, get: obj => obj.initialValue, set: (obj, value) => { obj.initialValue = value; } }, metadata: _metadata }, _initialValue_initializers, _instanceExtraInitializers);
                     __esDecorate(null, null, _editorValue_decorators, { kind: "field", name: "editorValue", static: false, private: false, access: { has: obj => "editorValue" in obj, get: obj => obj.editorValue, set: (obj, value) => { obj.editorValue = value; } }, metadata: _metadata }, _editorValue_initializers, _instanceExtraInitializers);
                     __esDecorate(null, null, _debouncedEditorValue_decorators, { kind: "field", name: "debouncedEditorValue", static: false, private: false, access: { has: obj => "debouncedEditorValue" in obj, get: obj => obj.debouncedEditorValue, set: (obj, value) => { obj.debouncedEditorValue = value; } }, metadata: _metadata }, _debouncedEditorValue_initializers, _instanceExtraInitializers);
                     __esDecorate(null, null, _smaller_decorators, { kind: "field", name: "smaller", static: false, private: false, access: { has: obj => "smaller" in obj, get: obj => obj.smaller, set: (obj, value) => { obj.smaller = value; } }, metadata: _metadata }, _smaller_initializers, _instanceExtraInitializers);
+                    __esDecorate(null, null, _canView_decorators, { kind: "field", name: "canView", static: false, private: false, access: { has: obj => "canView" in obj, get: obj => obj.canView, set: (obj, value) => { obj.canView = value; } }, metadata: _metadata }, _canView_initializers, _instanceExtraInitializers);
                     __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
                     class_1 = _classThis = _classDescriptor.value;
                     if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
@@ -214,6 +246,7 @@ let LiveCode = (() => {
                 editorValue = __runInitializers(this, _editorValue_initializers, '');
                 debouncedEditorValue = __runInitializers(this, _debouncedEditorValue_initializers, '');
                 smaller = __runInitializers(this, _smaller_initializers, false);
+                canView = __runInitializers(this, _canView_initializers, null);
             };
             return class_1 = _classThis;
         })())();
@@ -311,43 +344,66 @@ let LiveCode = (() => {
             });
             this.createEffect(() => {
                 if (this.src)
-                    return;
-                let content = this.content;
-                const isSelector = /^[.#]/.test(this.content);
-                // If code starts with . or #
-                if (isSelector) {
-                    // consider it a selector from which to get the code from.
-                    const html = document.querySelector(this.content);
-                    if (!html)
-                        throw Error(`${this.content} is not found`);
-                    content = unescape(html.innerHTML);
-                }
-                this.#applyCode(content);
-            });
-            this.createEffect(() => {
-                if (!this.src && !this.content)
-                    this.#loadCodeFromTemplate();
-            });
-            this.createEffect(() => {
-                if (this.src)
                     this.#loadCodeFromSrc();
+                else if (this.content)
+                    this.#loadCodeFromContent();
+                else
+                    this.#loadCodeFromTemplate();
             });
             this.createEffect(() => {
                 if (!this.autorun)
                     return;
-                // When initialValue is same as editorValue, it most likely means we
-                // have started fresh or reset (most likely the user did not restore
-                // the original code manually, but that could be possible too), so
-                // start the example right away.
-                if (this.#_.editorValue === this.#_.initialValue) {
-                    this.#executeCodeDebounced.cancel();
-                    this.#executeCodeQuick();
+                if (this.autorunInView) {
+                    const debouncedSetCanView = debounce(() => (this.#_.canView = true), 500);
+                    const observer = new IntersectionObserver(entries => {
+                        debouncedSetCanView.cancel();
+                        for (const entry of entries) {
+                            // Has come into view.
+                            if (entry.isIntersecting) {
+                                // on first run, show immediately if in view
+                                if (this.#_.canView === null)
+                                    this.#_.canView = true;
+                                // otherwise debounce to avoid many editors causing a flood of network and CPU load when scrolling past them.
+                                else
+                                    debouncedSetCanView();
+                            }
+                            else {
+                                this.#_.canView = false;
+                            }
+                        }
+                    });
+                    observer.observe(this);
+                    onCleanup(() => {
+                        debouncedSetCanView.cancel();
+                        observer.disconnect();
+                    });
                 }
-                // Otherwise we debounce while modifying code (it does not match
-                // with initialValue).
                 else {
-                    this.#executeCodeDebounced();
+                    this.#_.canView = true;
                 }
+                this.createEffect(() => {
+                    if (!this.#_.canView)
+                        return;
+                    this.createEffect(() => {
+                        // When initialValue is same as editorValue, it most likely means we
+                        // have started fresh or reset (most likely the user did not restore
+                        // the original code manually, but that could be possible too), so
+                        // start the example right away.
+                        if (this.#_.editorValue === this.#_.initialValue) {
+                            this.#executeCodeDebounced.cancel();
+                            this.#executeCodeQuick();
+                        }
+                        // Otherwise we debounce while modifying code (it does not match
+                        // with initialValue).
+                        else {
+                            this.#executeCodeDebounced();
+                        }
+                    });
+                    onCleanup(() => {
+                        // Empty string causes OutputView to be empty (f.e. removes the iframe)
+                        this.#_.debouncedEditorValue = '';
+                    });
+                });
             });
             this.#resizeObserver.observe(this.#form);
         }
@@ -427,7 +483,7 @@ let LiveCode = (() => {
             this.#_.error = '';
             this.#_.debouncedEditorValue = this.#_.editorValue;
         }
-        #executeCodeQuick = debounce(this.#executeCode, 0);
+        #executeCodeQuick = debounce(() => this.#executeCode(), 0);
         async #loadCodeFromSrc() {
             let cleaned = false;
             onCleanup(() => (cleaned = true));
@@ -437,6 +493,19 @@ let LiveCode = (() => {
             if (cleaned)
                 return;
             this.#applyCode(code);
+        }
+        #loadCodeFromContent() {
+            let content = this.content;
+            const isSelector = /^[.#]/.test(this.content);
+            // If code starts with . or #
+            if (isSelector) {
+                // consider it a selector from which to get the code from.
+                const html = document.querySelector(this.content);
+                if (!html)
+                    throw Error(`${this.content} is not found`);
+                content = unescape(html.innerHTML);
+            }
+            this.#applyCode(content);
         }
         #loadCodeFromTemplate() {
             const template = this.children[0]; // only child must be <template>
@@ -733,4 +802,13 @@ let LiveCode = (() => {
     return LiveCode = _classThis;
 })();
 export { LiveCode };
+function debounce(fn, time = 0) {
+    let timeout = 0;
+    const debounced = function (...args) {
+        clearTimeout(timeout);
+        timeout = window.setTimeout(() => fn.apply(this, args), time);
+    };
+    debounced.cancel = () => clearTimeout(timeout);
+    return debounced;
+}
 //# sourceMappingURL=LiveCode.js.map

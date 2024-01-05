@@ -1,6 +1,6 @@
 import {Element, element, stringAttribute, type ElementAttributes} from '@lume/element'
 import html from 'solid-js/html'
-import {createEffect} from 'solid-js'
+import {createEffect, onCleanup} from 'solid-js'
 
 export class OutputViewErrorEvent extends ErrorEvent {
 	error
@@ -26,7 +26,7 @@ class OutputView extends Element {
 		super.connectedCallback()
 
 		createEffect(() => {
-			this.value
+			if (!this.value) return // f.e. empty string
 			this.#renderCode()
 		})
 
@@ -38,8 +38,6 @@ class OutputView extends Element {
 	}
 
 	#handleMessage = (msg: MessageEvent<{error: unknown}>) => {
-		console.log('MESSAGE >>>>>>>>>', msg)
-
 		if (!(this.#iframe && msg.source === this.#iframe.contentWindow)) return
 
 		if (msg.data && msg.data.error) {
@@ -50,36 +48,29 @@ class OutputView extends Element {
 	#renderCode() {
 		switch (this.mode) {
 			case 'script>iframe': {
-				const html = URL.createObjectURL(
-					new Blob(
-						[
-							/*html*/ `<html>
-									<head></head>
-									<body>
-										<script>${iframeErrorHandler.toString()}</script>
-										<script>
-										${this.value}
-										</script>
-									</body>
-								</html>`,
-						],
-						{type: 'text/html'},
-					),
-				)
+				const html = /*html*/ `
+					<html>
+						<head></head>
+						<body>
+							<script>${iframeErrorHandler.toString()}</script>
+							<script>${this.value}</script>
+						</body>
+					</html>
+				`
+				const url = URL.createObjectURL(new Blob([html], {type: 'text/html'}))
 
-				this.#iframe.src = html
+				this.#iframe.src = url
+				onCleanup(() => URL.revokeObjectURL(url))
 
 				break
 			}
 
 			case 'html>iframe': {
-				const html = URL.createObjectURL(
-					new Blob([/*html*/ `<script>${iframeErrorHandler.toString()}</script>` + this.value], {
-						type: 'text/html',
-					}),
-				)
+				const html = /*html*/ `<script>${iframeErrorHandler.toString()}</script>` + this.value
+				const url = URL.createObjectURL(new Blob([html], {type: 'text/html'}))
 
-				this.#iframe.src = html
+				this.#iframe.src = url
+				onCleanup(() => URL.revokeObjectURL(url))
 
 				break
 			}
@@ -88,7 +79,7 @@ class OutputView extends Element {
 
 	template = () => html`
 		<div class="live-code-preview">
-			<iframe ref=${(e: HTMLIFrameElement) => (this.#iframe = e)}></iframe>
+			${() => (this.value ? html`<iframe ref=${(e: HTMLIFrameElement) => (this.#iframe = e)}></iframe>` : null)}
 		</div>
 	`
 

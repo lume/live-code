@@ -34,7 +34,7 @@ var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, 
 };
 import { Element, element, stringAttribute } from '@lume/element';
 import html from 'solid-js/html';
-import { createEffect } from 'solid-js';
+import { createEffect, onCleanup } from 'solid-js';
 export class OutputViewErrorEvent extends ErrorEvent {
     error;
     constructor(error) {
@@ -73,7 +73,8 @@ let OutputView = (() => {
         connectedCallback() {
             super.connectedCallback();
             createEffect(() => {
-                this.value;
+                if (!this.value)
+                    return; // f.e. empty string
                 this.#renderCode();
             });
             window.addEventListener('message', this.#handleMessage);
@@ -82,7 +83,6 @@ let OutputView = (() => {
             this.dispatchEvent(new OutputViewErrorEvent(error));
         }
         #handleMessage = (msg) => {
-            console.log('MESSAGE >>>>>>>>>', msg);
             if (!(this.#iframe && msg.source === this.#iframe.contentWindow))
                 return;
             if (msg.data && msg.data.error) {
@@ -92,32 +92,32 @@ let OutputView = (() => {
         #renderCode() {
             switch (this.mode) {
                 case 'script>iframe': {
-                    const html = URL.createObjectURL(new Blob([
-                        /*html*/ `<html>
-									<head></head>
-									<body>
-										<script>${iframeErrorHandler.toString()}</script>
-										<script>
-										${this.value}
-										</script>
-									</body>
-								</html>`,
-                    ], { type: 'text/html' }));
-                    this.#iframe.src = html;
+                    const html = /*html*/ `
+					<html>
+						<head></head>
+						<body>
+							<script>${iframeErrorHandler.toString()}</script>
+							<script>${this.value}</script>
+						</body>
+					</html>
+				`;
+                    const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+                    this.#iframe.src = url;
+                    onCleanup(() => URL.revokeObjectURL(url));
                     break;
                 }
                 case 'html>iframe': {
-                    const html = URL.createObjectURL(new Blob([/*html*/ `<script>${iframeErrorHandler.toString()}</script>` + this.value], {
-                        type: 'text/html',
-                    }));
-                    this.#iframe.src = html;
+                    const html = /*html*/ `<script>${iframeErrorHandler.toString()}</script>` + this.value;
+                    const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+                    this.#iframe.src = url;
+                    onCleanup(() => URL.revokeObjectURL(url));
                     break;
                 }
             }
         }
         template = () => html `
 		<div class="live-code-preview">
-			<iframe ref=${(e) => (this.#iframe = e)}></iframe>
+			${() => (this.value ? html `<iframe ref=${(e) => (this.#iframe = e)}></iframe>` : null)}
 		</div>
 	`;
         css = /*css*/ `
