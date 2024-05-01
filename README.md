@@ -2,12 +2,16 @@
 
 A `<live-code>` element that gives you a code editor with live results as you type.
 
-Examples:
+<a href="https://codepen.io/trusktr/pen/PogvVBj" target="_blank">
+<img width="801" alt="Screenshot 2024-05-01 at 3 34 28 PM" src="https://github.com/lume/live-code/assets/297678/177d0cd8-118e-416d-9b0f-bb9237b3ce9f">
+</a>
+
+#### `npm install @lume/live-code`
+
+## Examples:
 
 - CodePen: https://codepen.io/trusktr/pen/PogvVBj
 - Live demos on Lume's docs site are made with `<live-code>`: https://docs.lume.io/examples/hello-world/
-
-#### `npm install @lume/live-code`
 
 ## Run the examples
 
