@@ -1,12 +1,14 @@
 # @lume/live-code
 
-A `<live-code>` element that gives you a code editor with live results as you type.
+A `<live-code>` HTML element that gives you a code editor with live results as you type.
 
 <a href="https://codepen.io/trusktr/pen/PogvVBj" target="_blank">
 <img width="801" alt="Screenshot 2024-05-01 at 3 34 28 PM" src="https://github.com/lume/live-code/assets/297678/177d0cd8-118e-416d-9b0f-bb9237b3ce9f">
 </a>
 
 #### `npm install @lume/live-code`
+
+Compatible with Solid.js, Svelte, Vue, Angular, Ember, jQuery, React, Astro, Qwik.js, and every other web framework or library for creating HTML-based applications.
 
 ## Examples:
 
@@ -27,7 +29,9 @@ Specify content with the `content` attribute:
 <live-code content="console.log('hello')" mode="script>iframe" />
 
 <script type="importmap">
-	... setup the import map, f.e. see examples/index.html, or use an tool to generate an import map ...
+	... Set up an import map, or if you use a build tool like Webpack, Vite, Parcel, Rollup,
+  esbuild, swc, etc, skip this part. See examples/index.html for an importmap example, or
+  use a tool to generate an import map such as @jsenv/importmap-node-module. ...
 </script>
 
 <script type="module">
@@ -44,7 +48,7 @@ Specify content with the `content` property:
 	...
 </script>
 
-<script>
+<script type="module">
 	import '@lume/live-code' // defines the element
 
 	const editor = document.querySelector('#editor')
@@ -59,7 +63,7 @@ The `content` attribute or JS property is more useful for short pieces of text,
 or for programmatically setting from a string, and with template systems that
 set attributes from JS variables.
 
-Here's a JSX example (useful in React, Preact, Solid.js, etc):
+Here's a JSX example (useful in React, Preact, Solid.js, etc, requires using a compiler such as Babel, TypeScript, or ESBuild):
 
 ```js
 function SomeComponent(props) {
@@ -68,7 +72,7 @@ function SomeComponent(props) {
 }
 ```
 
-Here's a Lit `html` example:
+Here's a Lit `html` example (does not require any build step):
 
 ```js
 render() {
@@ -76,7 +80,7 @@ render() {
 }
 ```
 
-Here's a Solid.js `html` example in a Lume `Element`:
+Here's a Solid.js `html` example in a Lume `Element` (does not require any build step):
 
 ```js
 template() {
