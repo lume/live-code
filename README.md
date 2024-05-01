@@ -2,7 +2,10 @@
 
 A `<live-code>` element that gives you a code editor with live results as you type.
 
-Live examples: https://docs.lume.io/examples/hello-world/
+Examples:
+
+- CodePen: https://codepen.io/trusktr/pen/PogvVBj
+- Live demos on Lume's docs site are made with `<live-code>`: https://docs.lume.io/examples/hello-world/
 
 #### `npm install @lume/live-code`
 
@@ -20,7 +23,7 @@ Specify content with the `content` attribute:
 <live-code content="console.log('hello')" mode="script>iframe" />
 
 <script type="importmap">
-	... setup the import map, f.e. see examples/index.html, or use an tool to generate an import map such as JSPM Importmap Generator.  ...
+	... setup the import map, f.e. see examples/index.html, or use an tool to generate an import map ...
 </script>
 
 <script type="module">
