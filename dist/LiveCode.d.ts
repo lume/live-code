@@ -12,6 +12,17 @@ declare const LiveCode_base: (new (...a: any[]) => {
     "__#1@#createEffect1"(fn: () => void): void;
     "__#1@#stopEffects1"(): void;
     "__#1@#owner": import("solid-js").Owner | null;
+    /**
+     * Only useful when `autorun` is true. When `autorun` is true, then if this
+     * is true, the preview will only autorun if it is visible on screen (f.e.
+     * not scrolled outside of the view). If this is false, then the preview
+     * will autorun regardless if it is visible or not. If there are a lot of
+     * examples on the page, running them all even if they are not visible could
+     * be costly, and you may want to run only the ones that are in view.
+     *
+     * When true, any live code previews that go off screen will be discarded,
+     * and automatically re-ran when they come back into view.
+     */
     "__#1@#dispose": (() => void) | null;
     "__#1@#createEffect2"(fn: () => void): void;
     "__#1@#stopEffects2"(): void;
