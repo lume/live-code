@@ -30,8 +30,8 @@ Specify content with the `content` attribute:
 
 <script type="importmap">
 	... Set up an import map, or if you use a build tool like Webpack, Vite, Parcel, Rollup,
-  esbuild, swc, etc, skip this part. See examples/index.html for an importmap example, or
-  use a tool to generate an import map such as @jsenv/importmap-node-module. ...
+	 esbuild, swc, etc, skip this part. See examples/index.html for an importmap example, or
+	 use a tool to generate an import map such as @jsenv/importmap-node-module. ...
 </script>
 
 <script type="module">
