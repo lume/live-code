@@ -56,23 +56,30 @@ let LiveCode = (() => {
     let _classExtraInitializers = [];
     let _classThis;
     let _classSuper = Effectful(Element);
-    let _instanceExtraInitializers = [];
     let _content_decorators;
     let _content_initializers = [];
+    let _content_extraInitializers = [];
     let _src_decorators;
     let _src_initializers = [];
+    let _src_extraInitializers = [];
     let _stripIndent_decorators;
     let _stripIndent_initializers = [];
+    let _stripIndent_extraInitializers = [];
     let _trim_decorators;
     let _trim_initializers = [];
+    let _trim_extraInitializers = [];
     let _autorun_decorators;
     let _autorun_initializers = [];
+    let _autorun_extraInitializers = [];
     let _autorunInView_decorators;
     let _autorunInView_initializers = [];
+    let _autorunInView_extraInitializers = [];
     let _mode_decorators;
     let _mode_initializers = [];
+    let _mode_extraInitializers = [];
     let _debounce_decorators;
     let _debounce_initializers = [];
+    let _debounce_extraInitializers = [];
     var LiveCode = class extends _classSuper {
         static { _classThis = this; }
         static {
@@ -85,69 +92,69 @@ let LiveCode = (() => {
             _autorunInView_decorators = [booleanAttribute];
             _mode_decorators = [stringAttribute];
             _debounce_decorators = [numberAttribute];
-            __esDecorate(null, null, _content_decorators, { kind: "field", name: "content", static: false, private: false, access: { has: obj => "content" in obj, get: obj => obj.content, set: (obj, value) => { obj.content = value; } }, metadata: _metadata }, _content_initializers, _instanceExtraInitializers);
-            __esDecorate(null, null, _src_decorators, { kind: "field", name: "src", static: false, private: false, access: { has: obj => "src" in obj, get: obj => obj.src, set: (obj, value) => { obj.src = value; } }, metadata: _metadata }, _src_initializers, _instanceExtraInitializers);
-            __esDecorate(null, null, _stripIndent_decorators, { kind: "field", name: "stripIndent", static: false, private: false, access: { has: obj => "stripIndent" in obj, get: obj => obj.stripIndent, set: (obj, value) => { obj.stripIndent = value; } }, metadata: _metadata }, _stripIndent_initializers, _instanceExtraInitializers);
-            __esDecorate(null, null, _trim_decorators, { kind: "field", name: "trim", static: false, private: false, access: { has: obj => "trim" in obj, get: obj => obj.trim, set: (obj, value) => { obj.trim = value; } }, metadata: _metadata }, _trim_initializers, _instanceExtraInitializers);
-            __esDecorate(null, null, _autorun_decorators, { kind: "field", name: "autorun", static: false, private: false, access: { has: obj => "autorun" in obj, get: obj => obj.autorun, set: (obj, value) => { obj.autorun = value; } }, metadata: _metadata }, _autorun_initializers, _instanceExtraInitializers);
-            __esDecorate(null, null, _autorunInView_decorators, { kind: "field", name: "autorunInView", static: false, private: false, access: { has: obj => "autorunInView" in obj, get: obj => obj.autorunInView, set: (obj, value) => { obj.autorunInView = value; } }, metadata: _metadata }, _autorunInView_initializers, _instanceExtraInitializers);
-            __esDecorate(null, null, _mode_decorators, { kind: "field", name: "mode", static: false, private: false, access: { has: obj => "mode" in obj, get: obj => obj.mode, set: (obj, value) => { obj.mode = value; } }, metadata: _metadata }, _mode_initializers, _instanceExtraInitializers);
-            __esDecorate(null, null, _debounce_decorators, { kind: "field", name: "debounce", static: false, private: false, access: { has: obj => "debounce" in obj, get: obj => obj.debounce, set: (obj, value) => { obj.debounce = value; } }, metadata: _metadata }, _debounce_initializers, _instanceExtraInitializers);
+            __esDecorate(null, null, _content_decorators, { kind: "field", name: "content", static: false, private: false, access: { has: obj => "content" in obj, get: obj => obj.content, set: (obj, value) => { obj.content = value; } }, metadata: _metadata }, _content_initializers, _content_extraInitializers);
+            __esDecorate(null, null, _src_decorators, { kind: "field", name: "src", static: false, private: false, access: { has: obj => "src" in obj, get: obj => obj.src, set: (obj, value) => { obj.src = value; } }, metadata: _metadata }, _src_initializers, _src_extraInitializers);
+            __esDecorate(null, null, _stripIndent_decorators, { kind: "field", name: "stripIndent", static: false, private: false, access: { has: obj => "stripIndent" in obj, get: obj => obj.stripIndent, set: (obj, value) => { obj.stripIndent = value; } }, metadata: _metadata }, _stripIndent_initializers, _stripIndent_extraInitializers);
+            __esDecorate(null, null, _trim_decorators, { kind: "field", name: "trim", static: false, private: false, access: { has: obj => "trim" in obj, get: obj => obj.trim, set: (obj, value) => { obj.trim = value; } }, metadata: _metadata }, _trim_initializers, _trim_extraInitializers);
+            __esDecorate(null, null, _autorun_decorators, { kind: "field", name: "autorun", static: false, private: false, access: { has: obj => "autorun" in obj, get: obj => obj.autorun, set: (obj, value) => { obj.autorun = value; } }, metadata: _metadata }, _autorun_initializers, _autorun_extraInitializers);
+            __esDecorate(null, null, _autorunInView_decorators, { kind: "field", name: "autorunInView", static: false, private: false, access: { has: obj => "autorunInView" in obj, get: obj => obj.autorunInView, set: (obj, value) => { obj.autorunInView = value; } }, metadata: _metadata }, _autorunInView_initializers, _autorunInView_extraInitializers);
+            __esDecorate(null, null, _mode_decorators, { kind: "field", name: "mode", static: false, private: false, access: { has: obj => "mode" in obj, get: obj => obj.mode, set: (obj, value) => { obj.mode = value; } }, metadata: _metadata }, _mode_initializers, _mode_extraInitializers);
+            __esDecorate(null, null, _debounce_decorators, { kind: "field", name: "debounce", static: false, private: false, access: { has: obj => "debounce" in obj, get: obj => obj.debounce, set: (obj, value) => { obj.debounce = value; } }, metadata: _metadata }, _debounce_initializers, _debounce_extraInitializers);
             __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
             LiveCode = _classThis = _classDescriptor.value;
             if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
             __runInitializers(_classThis, _classExtraInitializers);
         }
         /** The text to put in the editor. */
-        content = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _content_initializers, ''
+        content = __runInitializers(this, _content_initializers, ''
         /**
          * A file from which to get code for the editor from. If given, takes
          * priority over the `code` value.
+         */
+        );
+        /**
+         * A file from which to get code for the editor from. If given, takes
+         * priority over the `code` value.
+         */
+        src = (__runInitializers(this, _content_extraInitializers), __runInitializers(this, _src_initializers, ''
+        /**
+         * When true (default) common indentation will be removed. Useful for
+         * example if the `content` property is being set with a template string and
+         * the content is indented to make the outer code more readable but the
+         * indentation is undersired in the result. Set the attribute
+         * `strip-indent="false"` to disable.
          */
         ));
         /**
-         * A file from which to get code for the editor from. If given, takes
-         * priority over the `code` value.
-         */
-        src = __runInitializers(this, _src_initializers, ''
-        /**
          * When true (default) common indentation will be removed. Useful for
          * example if the `content` property is being set with a template string and
          * the content is indented to make the outer code more readable but the
          * indentation is undersired in the result. Set the attribute
          * `strip-indent="false"` to disable.
          */
-        );
-        /**
-         * When true (default) common indentation will be removed. Useful for
-         * example if the `content` property is being set with a template string and
-         * the content is indented to make the outer code more readable but the
-         * indentation is undersired in the result. Set the attribute
-         * `strip-indent="false"` to disable.
-         */
-        stripIndent = __runInitializers(this, _stripIndent_initializers, true
+        stripIndent = (__runInitializers(this, _src_extraInitializers), __runInitializers(this, _stripIndent_initializers, true
         /**
          * When true (default) leading and trailing whitespace will be trimmed. Set
          * the attribute `trim="false"` to disable.
          */
-        );
+        ));
         /**
          * When true (default) leading and trailing whitespace will be trimmed. Set
          * the attribute `trim="false"` to disable.
          */
-        trim = __runInitializers(this, _trim_initializers, true
+        trim = (__runInitializers(this, _stripIndent_extraInitializers), __runInitializers(this, _trim_initializers, true
         /**
          * By default the live preview will update automatically (debounced) when
          * code in the editor is modified. Set to false to prevent automatic
          * running, and run only when the rerun button is clicked.
          */
-        );
+        ));
         /**
          * By default the live preview will update automatically (debounced) when
          * code in the editor is modified. Set to false to prevent automatic
          * running, and run only when the rerun button is clicked.
          */
-        autorun = __runInitializers(this, _autorun_initializers, true
+        autorun = (__runInitializers(this, _trim_extraInitializers), __runInitializers(this, _autorun_initializers, true
         /**
          * Only useful when `autorun` is true. When `autorun` is true, then if this
          * is true, the preview will only autorun if it is visible on screen (f.e.
@@ -159,7 +166,7 @@ let LiveCode = (() => {
          * When true, any live code previews that go off screen will be discarded,
          * and automatically re-ran when they come back into view.
          */
-        );
+        ));
         /**
          * Only useful when `autorun` is true. When `autorun` is true, then if this
          * is true, the preview will only autorun if it is visible on screen (f.e.
@@ -171,54 +178,59 @@ let LiveCode = (() => {
          * When true, any live code previews that go off screen will be discarded,
          * and automatically re-ran when they come back into view.
          */
-        autorunInView = __runInitializers(this, _autorunInView_initializers, true
+        autorunInView = (__runInitializers(this, _autorun_extraInitializers), __runInitializers(this, _autorunInView_initializers, true
         /**
          * Specify the editor mode:
          * - script
          * - script>iframe
          * - html>iframe
          */
-        );
+        ));
         /**
          * Specify the editor mode:
          * - script
          * - script>iframe
          * - html>iframe
          */
-        mode = __runInitializers(this, _mode_initializers, 'html>iframe'
+        mode = (__runInitializers(this, _autorunInView_extraInitializers), __runInitializers(this, _mode_initializers, 'html>iframe'
         /**
          * If `autorun` is true, then autorun is debounced by this amount in
          * milliseconds after a user types into the code editor. Defaults to `1000`.
          */
-        );
+        ));
         /**
          * If `autorun` is true, then autorun is debounced by this amount in
          * milliseconds after a user types into the code editor. Defaults to `1000`.
          */
-        debounce = __runInitializers(this, _debounce_initializers, 1000
+        debounce = (__runInitializers(this, _mode_extraInitializers), __runInitializers(this, _debounce_initializers, 1000
         /////////////////////////
         // Private reactive state
-        );
+        ));
         /////////////////////////
         // Private reactive state
-        #_ = new ((() => {
+        #_ = (__runInitializers(this, _debounce_extraInitializers), new ((() => {
             let _classDecorators = [reactive];
             let _classDescriptor;
             let _classExtraInitializers = [];
             let _classThis;
-            let _instanceExtraInitializers = [];
             let _error_decorators;
             let _error_initializers = [];
+            let _error_extraInitializers = [];
             let _initialValue_decorators;
             let _initialValue_initializers = [];
+            let _initialValue_extraInitializers = [];
             let _editorValue_decorators;
             let _editorValue_initializers = [];
+            let _editorValue_extraInitializers = [];
             let _debouncedEditorValue_decorators;
             let _debouncedEditorValue_initializers = [];
+            let _debouncedEditorValue_extraInitializers = [];
             let _smaller_decorators;
             let _smaller_initializers = [];
+            let _smaller_extraInitializers = [];
             let _canView_decorators;
             let _canView_initializers = [];
+            let _canView_extraInitializers = [];
             var class_1 = class {
                 static { _classThis = this; }
                 static { __setFunctionName(_classThis, ""); }
@@ -230,26 +242,29 @@ let LiveCode = (() => {
                     _debouncedEditorValue_decorators = [signal];
                     _smaller_decorators = [signal];
                     _canView_decorators = [signal];
-                    __esDecorate(null, null, _error_decorators, { kind: "field", name: "error", static: false, private: false, access: { has: obj => "error" in obj, get: obj => obj.error, set: (obj, value) => { obj.error = value; } }, metadata: _metadata }, _error_initializers, _instanceExtraInitializers);
-                    __esDecorate(null, null, _initialValue_decorators, { kind: "field", name: "initialValue", static: false, private: false, access: { has: obj => "initialValue" in obj, get: obj => obj.initialValue, set: (obj, value) => { obj.initialValue = value; } }, metadata: _metadata }, _initialValue_initializers, _instanceExtraInitializers);
-                    __esDecorate(null, null, _editorValue_decorators, { kind: "field", name: "editorValue", static: false, private: false, access: { has: obj => "editorValue" in obj, get: obj => obj.editorValue, set: (obj, value) => { obj.editorValue = value; } }, metadata: _metadata }, _editorValue_initializers, _instanceExtraInitializers);
-                    __esDecorate(null, null, _debouncedEditorValue_decorators, { kind: "field", name: "debouncedEditorValue", static: false, private: false, access: { has: obj => "debouncedEditorValue" in obj, get: obj => obj.debouncedEditorValue, set: (obj, value) => { obj.debouncedEditorValue = value; } }, metadata: _metadata }, _debouncedEditorValue_initializers, _instanceExtraInitializers);
-                    __esDecorate(null, null, _smaller_decorators, { kind: "field", name: "smaller", static: false, private: false, access: { has: obj => "smaller" in obj, get: obj => obj.smaller, set: (obj, value) => { obj.smaller = value; } }, metadata: _metadata }, _smaller_initializers, _instanceExtraInitializers);
-                    __esDecorate(null, null, _canView_decorators, { kind: "field", name: "canView", static: false, private: false, access: { has: obj => "canView" in obj, get: obj => obj.canView, set: (obj, value) => { obj.canView = value; } }, metadata: _metadata }, _canView_initializers, _instanceExtraInitializers);
+                    __esDecorate(null, null, _error_decorators, { kind: "field", name: "error", static: false, private: false, access: { has: obj => "error" in obj, get: obj => obj.error, set: (obj, value) => { obj.error = value; } }, metadata: _metadata }, _error_initializers, _error_extraInitializers);
+                    __esDecorate(null, null, _initialValue_decorators, { kind: "field", name: "initialValue", static: false, private: false, access: { has: obj => "initialValue" in obj, get: obj => obj.initialValue, set: (obj, value) => { obj.initialValue = value; } }, metadata: _metadata }, _initialValue_initializers, _initialValue_extraInitializers);
+                    __esDecorate(null, null, _editorValue_decorators, { kind: "field", name: "editorValue", static: false, private: false, access: { has: obj => "editorValue" in obj, get: obj => obj.editorValue, set: (obj, value) => { obj.editorValue = value; } }, metadata: _metadata }, _editorValue_initializers, _editorValue_extraInitializers);
+                    __esDecorate(null, null, _debouncedEditorValue_decorators, { kind: "field", name: "debouncedEditorValue", static: false, private: false, access: { has: obj => "debouncedEditorValue" in obj, get: obj => obj.debouncedEditorValue, set: (obj, value) => { obj.debouncedEditorValue = value; } }, metadata: _metadata }, _debouncedEditorValue_initializers, _debouncedEditorValue_extraInitializers);
+                    __esDecorate(null, null, _smaller_decorators, { kind: "field", name: "smaller", static: false, private: false, access: { has: obj => "smaller" in obj, get: obj => obj.smaller, set: (obj, value) => { obj.smaller = value; } }, metadata: _metadata }, _smaller_initializers, _smaller_extraInitializers);
+                    __esDecorate(null, null, _canView_decorators, { kind: "field", name: "canView", static: false, private: false, access: { has: obj => "canView" in obj, get: obj => obj.canView, set: (obj, value) => { obj.canView = value; } }, metadata: _metadata }, _canView_initializers, _canView_extraInitializers);
                     __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
                     class_1 = _classThis = _classDescriptor.value;
                     if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
                     __runInitializers(_classThis, _classExtraInitializers);
                 }
-                error = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _error_initializers, ''));
-                initialValue = __runInitializers(this, _initialValue_initializers, '');
-                editorValue = __runInitializers(this, _editorValue_initializers, '');
-                debouncedEditorValue = __runInitializers(this, _debouncedEditorValue_initializers, '');
-                smaller = __runInitializers(this, _smaller_initializers, false);
-                canView = __runInitializers(this, _canView_initializers, null);
+                error = __runInitializers(this, _error_initializers, '');
+                initialValue = (__runInitializers(this, _error_extraInitializers), __runInitializers(this, _initialValue_initializers, ''));
+                editorValue = (__runInitializers(this, _initialValue_extraInitializers), __runInitializers(this, _editorValue_initializers, ''));
+                debouncedEditorValue = (__runInitializers(this, _editorValue_extraInitializers), __runInitializers(this, _debouncedEditorValue_initializers, ''));
+                smaller = (__runInitializers(this, _debouncedEditorValue_extraInitializers), __runInitializers(this, _smaller_initializers, false));
+                canView = (__runInitializers(this, _smaller_extraInitializers), __runInitializers(this, _canView_initializers, null));
+                constructor() {
+                    __runInitializers(this, _canView_extraInitializers);
+                }
             };
             return class_1 = _classThis;
-        })())();
+        })())());
         #id = ID++;
         #codemirror;
         #resizeObserver = new ResizeObserver(changes => {
