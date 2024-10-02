@@ -116,7 +116,7 @@ class LiveCode extends Effectful(Element) {
 			if (change.contentBoxSize) {
 				// Get the first item, because we're not expecting to
 				// have a column layout.
-				const {inlineSize, blockSize} = change.contentBoxSize[0]
+				const {inlineSize, blockSize} = change.contentBoxSize[0]!
 
 				const isHorizontal = getComputedStyle(this.#form).writingMode.includes('horizontal')
 
@@ -152,7 +152,7 @@ class LiveCode extends Effectful(Element) {
 		}
 	}
 
-	connectedCallback() {
+	override connectedCallback() {
 		super.connectedCallback()
 
 		// This is a fallback for browsers that don't have Fullscreen API,
@@ -273,7 +273,7 @@ class LiveCode extends Effectful(Element) {
 		this.#resizeObserver.observe(this.#form)
 	}
 
-	disconnectedCallback() {
+	override disconnectedCallback() {
 		super.disconnectedCallback()
 		this.stopEffects()
 		this.#resizeObserver.disconnect()
@@ -423,7 +423,7 @@ class LiveCode extends Effectful(Element) {
 		return this.mode.startsWith('html') ? 'html' : 'js'
 	}
 
-	template = () => html`
+	override template = () => html`
 		<div ref=${(e: HTMLDivElement) => (this.#fullviewModalHost = e)} style="display: contents">
 			<form
 				ref=${(e: HTMLFormElement) => (this.#form = e)}
@@ -496,7 +496,7 @@ class LiveCode extends Effectful(Element) {
 		</div>
 	`
 
-	css = /*css*/ `
+	override css = /*css*/ `
 		:host {
 			height: 420px;
 		}

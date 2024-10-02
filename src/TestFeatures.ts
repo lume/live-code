@@ -48,7 +48,7 @@ class TestFeatures extends Element {
 		</script>
 	`).trim()
 
-	template = () => html`
+	override template = () => html`
 		<div>
 			<h2>This example runs JavaScript code inside an iframe, in a script tag in the body.</h2>
 

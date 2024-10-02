@@ -34,7 +34,7 @@
 		"thememirror": "^2.0.0"
 	},
 	"devDependencies": {
-		"@lume/cli": "^0.13.0",
+		"@lume/cli": "^0.14.0",
 		"five-server": "^0.3.1",
 		"lowclass": "^8.0.0",
 		"prettier": "3.0.3",

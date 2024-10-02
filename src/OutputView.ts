@@ -3,7 +3,7 @@ import html from 'solid-js/html'
 import {createEffect, onCleanup} from 'solid-js'
 
 export class OutputViewErrorEvent extends ErrorEvent {
-	error
+	override error
 	constructor(error: unknown) {
 		super('error', {})
 		this.error = error
@@ -15,14 +15,14 @@ type OutputViewAttributes = 'value' | 'mode'
 export
 @element('output-view')
 class OutputView extends Element {
-	hasShadow = false
+	override hasShadow = false
 
 	@stringAttribute value = ''
 	@stringAttribute mode: 'script>iframe' | 'html>iframe' = 'html>iframe'
 
 	#iframe!: HTMLIFrameElement
 
-	connectedCallback() {
+	override connectedCallback() {
 		super.connectedCallback()
 
 		createEffect(() => {
@@ -77,13 +77,13 @@ class OutputView extends Element {
 		}
 	}
 
-	template = () => html`
+	override template = () => html`
 		<div class="live-code-preview">
 			${() => (this.value ? html`<iframe ref=${(e: HTMLIFrameElement) => (this.#iframe = e)}></iframe>` : null)}
 		</div>
 	`
 
-	css = /*css*/ `
+	override css = /*css*/ `
 		:host { display: contents; }
 
 		.live-code-preview iframe {
