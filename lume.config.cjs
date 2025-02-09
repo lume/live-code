@@ -33,6 +33,7 @@ module.exports = {
 			'@lezer/html': '/node_modules/@lezer/html/dist/index.js',
 			'@lezer/javascript': '/node_modules/@lezer/javascript/dist/index.js',
 			'@lezer/lr': '/node_modules/@lezer/lr/dist/index.js',
+			'@marijn/find-cluster-break': '/node_modules/@marijn/find-cluster-break/src/index.js',
 			'@uiw/codemirror-theme-noctis-lilac': '/node_modules/@uiw/codemirror-theme-noctis-lilac/esm/index.js',
 			'@uiw/codemirror-themes': '/node_modules/@uiw/codemirror-themes/esm/index.js',
 			codemirror: '/node_modules/codemirror/dist/index.js',
