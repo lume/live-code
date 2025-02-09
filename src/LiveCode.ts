@@ -398,8 +398,29 @@ class LiveCode extends Effectful(Element) {
 	}
 
 	#applyCode(code: string) {
-		const host = window.location.origin
-		code = code.replaceAll('${host}', host).replaceAll('href="/"', `href="${host}"`)
+		// for back compat
+		if (code.includes('${host}')) {
+			console.warn('<live-code>: ${host} is deprecated, use ${location.origin} instead')
+			code = code.replaceAll('${host}', location.origin)
+		}
+		if (code.includes('href="/"')) {
+			console.warn('<live-code>: href="/" is deprecated, use a <base> tag instead.')
+			code = code.replaceAll('href="/"', `href="${location.origin}"`)
+		}
+
+		const keys = [
+			'hash',
+			'host',
+			'hostname',
+			'href',
+			'origin',
+			'pathname',
+			'port',
+			'protocol',
+			'search',
+		] satisfies Array<keyof typeof location>
+
+		for (const key of keys) code = code.replace('${location.' + key + '}', window.location[key])
 
 		// FIXME we rely on this so that live preview will not run twice
 		// initially. Instead, we need to update <code-mirror> so that it does
