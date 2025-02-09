@@ -119,29 +119,33 @@ not if it is added later. If you're doing things programmatically, then send the
 content in via the `content` property instead of appending a `<template>` (f.e.
 `editor.content = template.innerHTML`).
 
-## Attributes
+### Attributes
 
-Each attribute has a respective JS property of the same name.
+Each attribute has a respective JS property of the same name (but camelCase instead of dash-case).
 
 - `content` - Either a string of text, or a class or ID selector starting with
   `.` or `#`. The given text string, or the text content of the selected element,
   will appear in the editor. Any time the user resets the editor with the Reset
   button or `reset()` method, the text in the editor will reset to the initial
-  value specified by this. Default: `""` which is ignored.
+  value specified by this.
+  - Default: `""` which is ignored.
 - `src` - Specify a file from which to get text content from. If `content` is
   also specified, content loaded from `src` will have priority and `content` will
-  be overridden. Default: `""` which is ignored.
+  be overridden.
+  - Default: `""` which is ignored.
 - `autorun` - A boolean. If true, editing the text will cause the preview area
   to automatically re-run based on the new content. The `Rerun` button will always force a
-  rerun. Default: `true`.
-- `stripIndent` - A boolean. If true, the given code will be unindented, which
+  rerun.
+  - Default: `true`.
+- `strip-indent` - A boolean. If true, the given code will be unindented, which
   is useful for template strings that are indented within the source where they
-  are defined. Default: `true`.
+  are defined.
+  - Default: `true`.
 - `trim` - A boolean. If true, leading and trailing white space will be removed.
-  Default: `true`.
+  - Default: `true`.
 - `debounce` - A number. If `autorun` is true, then autorun is debounced by
-  this amount in milliseconds after a user types into the code editor. Defaults:
-  `1000`.
+  this amount in milliseconds after a user types into the code editor.
+  - Default: `1000`.
 - `mode` - The mode specifies which type of content the editor will execute.
   Possible values are the following strings:
 
